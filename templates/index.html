@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chọn tệp và hiển thị ảnh</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-panel {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            /* Kích thước chiều rộng cố định */
+            height: 500px;
+            /* Kích thước chiều cao cố định */
+            overflow: hidden;
+        }
+
+        #image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        label[for="file-input"] {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+            /* Khoảng cách giữa nút chọn và khung ảnh */
+        }
+
+        label[for="file-input"]:hover {
+            background-color: #2980b9;
+        }
+
+        .right-panel {
+            flex: 1;
+        }
+
+        #result {
+            white-space: pre;
+            /* Hoặc white-space: pre-wrap; */
+            overflow: auto;
+            /* Hoặc overflow: scroll; */
+            max-height: 500px;
+            /* Đặt chiều cao tối đa để có thanh cuộn khi cần thiết */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SorimachiVN-Ocr</h1>
+    <div class="container">
+        <div class="left-panel">
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                <label for="file-input">Chọn tệp ảnh</label>
+                <input type="file" name="file" accept=".jpg, .png" id="file-input">
+            </form>
+            <div class="image-container">
+                <img src="" alt="" id="image-preview">
+            </div>
+        </div>
+        <div class="right-panel">
+            <h2>Kết quả:</h2>
+            <div id="result"></div>
+        </div>
+    </div>
+    <!-- Trong phần head của trang HTML -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        const resultDiv = document.getElementById('result');
+
+        fileInput.addEventListener('change', (e) => {
+
+            const formData = new FormData();
+            formData.append('file', e.target.files[0]);
+
+            fetch('/sorimachivn-ocr', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.src = e.target.result;
+                        resultDiv.textContent = data;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

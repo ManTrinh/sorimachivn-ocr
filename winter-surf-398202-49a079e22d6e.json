@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "winter-surf-398202",
+  "private_key_id": "49a079e22d6ef98d4474411b388007f963314396",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCleVSHIrYDlBUJ\nJNzKHc2eEcz542SsAY+fH3gHK07QfSMCVquIp5KPo3NughAGXFIoGnlhHtvbNSKC\nrtPsg8ihqoh+3TOX6Xf9MoSz36cUXi+GCFHug/KTiqSzWoiRY7a+KQWNh2d+YB33\njm2bpxwBbWCV0sy8KVaLwRSPTjFF6VY5xkuMmhNunn2iLW4wbJ3k725uEXcuuG07\nFVbCDMaJi2W/ddL1QzGlyjYFHfO7P8AoM5IpR4n05y4FjldtLKWecTyZl6gM4pPg\nUyh4NuuSYTDvgwdF2Ydh86kSMkHa1c9bD5WarDKyzBpJ2otDA6o8kMIftkJDSORc\n+QqRDjXfAgMBAAECggEABmaODXgbQEIvGh5x5+OFO5MGsbfJAhpBWu9VrjlPoCLn\nAsUld3C765Bv+5tOUWCq0OBNR6Nw76a7ggCPM/vY+9/jzbxyrXKbcJDOr0J8bP5D\nqlSSDr7N2EUpn8Jlu/H2dJ6Tl2jgaPQA1L2OodGx9KAtdz4jKzgSH+/FAtIMd97B\ntV0/ZdgCgsIpHFjp1/8GaGVZMqq23vctN+6eH0f0G9JB0C0Dmt2A5VBU82NhSPMD\nKRfIKn+W9mvVkRtG/L4YLvJ7ZAUkthih4A6QqCJEYj37oQlmS/6dimUXzaW/MaMB\nfJZsl38a75HLfZfKKLgzgDUQbiuLfxrS+Qu0Zmx8eQKBgQDji1Zpe7kDZHOqQPE6\nouFVM/Gl5y8VNI5CUtfVrngHEc5xJl4hbDR0F5GBdtqHsYAZbKTzmChe+qFv7NWk\nF1Rk5+OKZ0DdMwCYVaUQEJECh59uM8T7TMJwpMh8sRmgPFBj5mEYXNXmgd4auf1a\ndC//rkIcJDgTQCpY7w3KPdHVUwKBgQC6KttBYz4i2LedGVSe6Q0CqlnSn7xbi+IL\nfU/6rJFGaHPHAnBH0KVVwpxAP3XyuGy7BS6OLcaoTOZP01wWMuUvvkMiV3KxE08m\ny5HZHe+T9dDSFM8uRLzapq+L1mL5IrEiYgIWchPbBLmUlBO/jQxl8exs5ssRW40E\nBSC6m0AfxQKBgQCr/EJJIlG6BbADDGkId9o3KzbHvdBxh7LK4JDwmplwRn4yOdzG\nCGIxKSs6npoYHAqFrP+Uevpwp6Fj1q+4AkYwqrDqiJaXWphli75iQRNJxTa09f46\nL098EqDS1o1W9p+Qkq3q2yh1vM0iiFe9ibpJ1+1yFdIogsQ/ShizNzylrwKBgEnj\nVpA2LmQwNXfxpMdJYfOL3wicg2qmMzoyKzsnoKUcMc9rpVqrceN+0Psi9NI35le3\n78lYW79Sfhpyndrlqlbvob+Qi6HCMykHpMRSgFLuPkoTHkOT3oy9mXDbzv5oiXtH\nAOMdtcm4r1tMBiaBeclAYoC6fSBPgMF2s428ro+tAoGBAJZkdvbvD3RZ9rl8niQC\nJfZMpXm4E8LCgQDUJPS9H0/ORx2VI1CSa/bAnzs4lE4IVaDEi/tShocTWlcuHoNi\nie6GbUGzNXQo8iN+4BU1U8soHqERmCfm0zV/RlwJ6Ei2/hxYmP1lGy4AsHWVxyyD\n70Btb3TpXqGbhXq9dcKXZLuu\n-----END PRIVATE KEY-----\n",
+  "client_email": "logodetect@winter-surf-398202.iam.gserviceaccount.com",
+  "client_id": "101008523256261462635",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/logodetect%40winter-surf-398202.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
