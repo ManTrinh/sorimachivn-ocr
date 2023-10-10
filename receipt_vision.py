@@ -8,7 +8,7 @@ api_url = 'http://www.jpnumber.com/searchnumber.do?'
 number_company_list = [r"T\d{13}"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
-day_match_list = [r'\d{4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
+day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
 small_price_list = [r"小.*計"]
 tax_price_list = [r"外税|内税|消費税|税金"]
 discount_price_list = [r"値引|奉仕額"]
@@ -59,7 +59,7 @@ class ReceiptInfo:
         'number': phonenumber
         }
         response = requests.get(api_url, params=params, headers = {
-            'User-Agent': 'Chrome/94.0.4606.71',
+            'User-Agent': 'Chrome/117.0.0.0',
         })
 
         if response.status_code == 200:
@@ -130,6 +130,8 @@ class ReceiptInfo:
             end_line_item_idx = tax_price_idx
         if small_price_idx < 0 and tax_price_idx > 0 and total_price_idx < tax_price_idx:
             end_line_item_idx = total_price_idx
+        if tax_price_idx < 0 and small_price_idx < 0 and total_price_idx > 0:
+            end_line_item_idx = total_price_idx    
 
         distance = end_line_item_idx % item_loop      
         end_line_item_idx = end_line_item_idx - distance
