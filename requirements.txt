@@ -1,4 +1,4 @@
-openai==0.2.6
+openai==0.28.0
 beautifulsoup4==4.12.2
 google-api-core==2.11.1
 google-auth==2.22.0

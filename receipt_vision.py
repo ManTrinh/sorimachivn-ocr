@@ -10,8 +10,8 @@ phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
 day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
 small_price_list = [r"小.*計"]
-tax_price_list = [r"外税|内税|消費税|税金"]
-discount_price_list = [r"値引|奉仕額"]
+tax_price_list = [r"外.*税|内.*税|消.*費.*税|税.*金"]
+discount_price_list = [r"値.*引|奉.*仕.*額"]
 total_price_list = [r".*合.*計"]
 
 # Special
