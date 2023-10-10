@@ -6,7 +6,7 @@ import openai
 
 openai.api_key="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"
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\HP\Desktop\winter-surf-398202-49a079e22d6e.json"
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r".\winter-surf-398202-49a079e22d6e.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"winter-surf-398202-49a079e22d6e.json"
 
 def detect_text(content):
     client = vision.ImageAnnotatorClient()
