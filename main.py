@@ -24,7 +24,7 @@ def call_function():
     except Exception as e:
         return jsonify({'error': str(e)})
 
-@app.route('/test', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         # Xử lý tệp đã chọn
