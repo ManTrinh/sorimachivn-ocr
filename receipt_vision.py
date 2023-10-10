@@ -2,7 +2,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import vision_doc_detect
-import time
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # Reg
