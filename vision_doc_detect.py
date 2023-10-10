@@ -46,8 +46,8 @@ def detect_text(path):
         )
     return text
     
-folder_path = "./imgTest/"
-for filename in os.listdir(folder_path):
-    if filename.endswith(".jpg"):
-        file_path = os.path.join(folder_path, filename)
-        detect_text(file_path)
+# folder_path = "./imgTest/"
+# for filename in os.listdir(folder_path):
+#     if filename.endswith(".jpg"):
+#         file_path = os.path.join(folder_path, filename)
+#         detect_text(file_path)
