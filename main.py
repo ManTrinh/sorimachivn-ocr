@@ -4,9 +4,7 @@ import os
 import receipt_vision
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'  # Thư mục lưu trữ ảnh tải lên
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = 'uploads'  # Thư mục lưu trữ tệp đã tải lên
 
 @app.route('/sorimachivn-ocr', methods=['POST'])
 def call_function():
