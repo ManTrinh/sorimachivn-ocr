@@ -8,11 +8,11 @@ openai.api_key="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"
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\HP\Desktop\winter-surf-398202-49a079e22d6e.json"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r".\winter-surf-398202-49a079e22d6e.json"
 
-def detect_text(path):
+def detect_text(content):
     client = vision.ImageAnnotatorClient()
 
-    with open(path, "rb") as image_file:
-        content = image_file.read()
+    # with open(path, "rb") as image_file:
+    #     content = image_file.read()
     image = vision.Image(content=content)
     response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
     texts = response.text_annotations

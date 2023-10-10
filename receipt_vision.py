@@ -273,11 +273,11 @@ class ReceiptInfo:
                 detailVal.append(self.lines[j])         
             detailVal.append("\n")
         return "".join(detailVal)    
-def getResult(path):
+def getResult(file_byte_data):
     # # Lấy thời gian bắt đầu
     # start_time = time.time()
 
-    content = vision_doc_detect.detect_text(path).strip().split('\n')
+    content = vision_doc_detect.detect_text(file_byte_data).strip().split('\n')
     obj = ReceiptInfo(content)
     return obj.getInfo()
 

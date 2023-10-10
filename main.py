@@ -11,11 +11,13 @@ def call_function():
     try:
         file = request.files['file']
         # Gọi hàm từ tệp .py
-        if file:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            result = receipt_vision.getResult(file_path)  # Thay "your_function" bằng tên hàm bạn muốn gọi
+        # if file:
+        #     filename = secure_filename(file.filename)
+        #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        #     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # Đọc nội dung của tệp và chuyển thành dạng byte
+        file_byte_data = file.read()
+        result = receipt_vision.getResult(file_byte_data)  # Thay "your_function" bằng tên hàm bạn muốn gọi
         # Trả về kết quả
         # return jsonify({'result': result})
         return result
