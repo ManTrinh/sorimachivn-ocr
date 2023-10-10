@@ -12,10 +12,9 @@ def call_function():
         file = request.files['file']
         # Gọi hàm từ tệp .py
         if file:
-        # Lưu tệp ảnh vào máy chủ và lấy đường dẫn tệp ảnh
-        # Lưu tệp tạm thời vào thư mục đã định nghĩa
+            filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             result = receipt_vision.getResult(file_path)  # Thay "your_function" bằng tên hàm bạn muốn gọi
         # Trả về kết quả
         # return jsonify({'result': result})
