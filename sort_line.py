@@ -7,9 +7,9 @@
 #     [[(797, 532), (1019, 531), (1019, 582), (797, 583)],"Text5"]
 # ]
 
-def are_boxes_on_same_row(box1, box2, tolerance=80):
-    center_y1 = ((box1[0][1]) + (box1[1][1]) + (box1[2][1]) + (box1[3][1])) / 2
-    center_y2 = ((box2[0][1]) + (box2[1][1]) + (box2[2][1]) + (box2[3][1])) / 2
+def are_boxes_on_same_row(box1, box2, tolerance=5):
+    center_y1 = ((box1[0][1]) + (box1[1][1])) / 2
+    center_y2 = ((box2[0][1]) + (box2[1][1])) / 2
     # So sánh giá trị y trung tâm với khoảng sai số (tolerance)
     return abs(center_y1 - center_y2) <= tolerance
 

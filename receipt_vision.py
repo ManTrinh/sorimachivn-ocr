@@ -16,7 +16,7 @@ total_price_list = [r".*合.*計"]
 
 # Special
 # price_list = [r"(¥\d+,\d+|¥\d+|¥-\d+|\d+円)"]
-price_list = [r"[¥\\\\][0-9,.]+|\d{1,3}(?:[,.]\d{3})+|[0-9,.]+円"]
+price_list = [r"\s[¥\\\\][0-9,.]+|\s\d{1,3}(?:[,.]\d{3})+|\s[0-9,.]+円"]
 
 
 receipt_keys = [
@@ -272,8 +272,8 @@ class ReceiptInfo:
         test = self.get_partern(price_list, 4)
         for i in range(test[1], test[2], test[0]):
             for j in range(i, i + test[0]):
-                detailVal.append(self.lines[j])         
-            detailVal.append("\n")
+                detailVal.append(self.lines[j])
+            detailVal.append("\n")         
         return "".join(detailVal)    
 def getResult(file_byte_data):
     # # Lấy thời gian bắt đầu
