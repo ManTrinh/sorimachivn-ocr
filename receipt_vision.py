@@ -273,7 +273,7 @@ class ReceiptInfo:
         for i in range(test[1], test[2], test[0]):
             for j in range(i, i + test[0]):
                 detailVal.append(self.lines[j])
-            detailVal.append("\n")         
+                detailVal.append("\n")      
         return "".join(detailVal)    
 def getResult(file_byte_data):
     # # Lấy thời gian bắt đầu
