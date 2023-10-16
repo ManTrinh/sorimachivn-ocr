@@ -10,13 +10,13 @@ phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
 day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
 small_price_list = [r"小.*計"]
-tax_price_list = [r"外.*税|内.*税|消.*費.*税|税.*金"]
-discount_price_list = [r"値.*引|奉.*仕.*額"]
+tax_price_list = [r".*外.*税|.*内.*税|.*消.*費.*税|.*税.*金"]
+discount_price_list = [r".*値.*引|.*奉.*仕.*額"]
 total_price_list = [r".*合.*計"]
 
 # Special
 # price_list = [r"(¥\d+,\d+|¥\d+|¥-\d+|\d+円)"]
-price_list = [r"\s[¥\\\\][0-9,.]+|\s\d{1,3}(?:[,.]\d{3})+|\s[0-9,.]+円"]
+price_list = [r"[¥\\\\][0-9,.]+|\d{1,3}(?:[,.]\d{3})+|[0-9,.]+円"]
 
 
 receipt_keys = [
@@ -274,15 +274,13 @@ class ReceiptInfo:
             for j in range(i, i + test[0]):
                 detailVal.append(self.lines[j])
                 detailVal.append("\n")      
-        return "".join(detailVal)    
+        return "".join(detailVal)
+        
 def getResult(file_byte_data):
-    # # Lấy thời gian bắt đầu
     # start_time = time.time()
-
     content = vision_doc_detect.detect_text(file_byte_data).strip().split('\n')
     obj = ReceiptInfo(content)
     return obj.getInfo()
-
     # end_time = time.time()
     # elapsed_time = end_time - start_time
     # print(f"Times: {elapsed_time}s")    

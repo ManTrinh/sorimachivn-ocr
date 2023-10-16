@@ -10,7 +10,6 @@
 def are_boxes_on_same_row(box1, box2, tolerance=10):
     center_y1 = ((box1[0][1]) + (box1[1][1])) / 2
     center_y2 = ((box2[0][1]) + (box2[1][1])) / 2
-    # So sánh giá trị y trung tâm với khoảng sai số (tolerance)
     return abs(center_y1 - center_y2) <= tolerance
 
 # Sắp xếp các bounding box theo hàng
@@ -18,7 +17,6 @@ def Get_all_text(bounding_boxes):
     sorted_boxes = []
     for box in bounding_boxes:
         added = False
-        # Kiểm tra xem box có nằm cùng hàng với bất kỳ bounding box nào trong sorted_boxes không
         for row in sorted_boxes:
             boxTmp = box[0]
             boxRowTmp = row[0][0]
