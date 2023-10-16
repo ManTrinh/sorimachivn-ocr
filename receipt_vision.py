@@ -6,7 +6,7 @@ api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # Reg
 number_company_list = [r"T\d{13}"]
-phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}']
+phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
 day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
 small_price_list = [r"小.*計"]
@@ -54,7 +54,8 @@ class ReceiptInfo:
         
     def get_company_name(self, phonenumber):
         company_name = ""
-        regname = "numberinfo_{}.html".format(phonenumber).replace("-", "_")
+        phonenumber = re.sub(r'[()\-]', '_', phonenumber)
+        regname = "numberinfo_{}.html".format(phonenumber).replace("__", "_")
         params = {
         'number': phonenumber
         }
