@@ -224,10 +224,12 @@ class ReceiptInfo:
             muti_val = self.get_muti_val(array_text)
 
         if title_idx == 15:
-            val = self.find_val(self.lines[index], price_list)
+            # val = self.find_val(self.lines[index], price_list)
+            val = self.lines[index]
 
         if title_idx == 16:
-            val = self.find_val(self.lines[index], price_list)
+            # val = self.find_val(self.lines[index], price_list)
+            val = self.lines[index]
 
         if index == -1:
             val = ""
