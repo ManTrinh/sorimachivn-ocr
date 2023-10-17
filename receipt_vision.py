@@ -215,7 +215,8 @@ class ReceiptInfo:
             return muti_val         
 
         if title_idx == 12:
-            muti_val = self.get_muti_val(array_text)
+            # muti_val = self.get_muti_val(array_text)
+            val = self.find_val(self.lines[index], price_list)
 
         if title_idx == 13:
             muti_val = self.get_muti_val(array_text)
@@ -224,8 +225,8 @@ class ReceiptInfo:
             muti_val = self.get_muti_val(array_text)
 
         if title_idx == 15:
-            # val = self.find_val(self.lines[index], price_list)
-            val = self.lines[index]
+            val = self.find_val(self.lines[index], price_list)
+            # val = self.lines[index]
 
         if title_idx == 16:
             # val = self.find_val(self.lines[index], price_list)
