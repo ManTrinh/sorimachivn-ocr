@@ -7,13 +7,13 @@
 #     [[(797, 532), (1019, 531), (1019, 582), (797, 583)],"Text5"]
 # ]
 
-def are_boxes_on_same_row(box1, box2, tolerance=10):
+def are_boxes_on_same_row(box1, box2, tolerance=20):
     center_y1 = ((box1[0][1]) + (box1[1][1])) / 2
     center_y2 = ((box2[0][1]) + (box2[1][1])) / 2
     return abs(center_y1 - center_y2) <= tolerance
 
 # Sắp xếp các bounding box theo hàng
-def Get_all_text(bounding_boxes):
+def get_all_result(bounding_boxes):
     sorted_boxes = []
     for box in bounding_boxes:
         added = False
@@ -40,6 +40,9 @@ def Get_all_text(bounding_boxes):
         one_row_arr = []
         # arr text neu tọa độ gần nhau
         current_group = []
+        # text
+        height_text_row = []
+
         for box in sorted_coordinates_colums:
             # one_row_arr.append(box[1])
             if not current_group:
@@ -62,7 +65,10 @@ def Get_all_text(bounding_boxes):
             one_row_arr.append(grouped_values)
 
         one_row_val = " ".join(one_row_arr)
-        result.append(one_row_val)
+        height = abs(group[0][0][2][1] - group[0][0][0][1])
+        height_text_row.append(one_row_val)
+        height_text_row.append(height)
+        result.append(height_text_row)
 
-    all_text = "\n".join(result)
-    return all_text
+    # all_text = "\n".join(result)
+    return result

@@ -16,6 +16,7 @@ def detect_text(content):
     #     content = image_file.read()
     image = vision.Image(content=content)
     response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
+    # response = client.document_text_detection(image=image)
     texts = response.text_annotations
     result = []
     content = []
@@ -33,7 +34,7 @@ def detect_text(content):
         # arrVal.append("\n{}".format(",".join(vertices)))
         result.append(arrVal)
 
-    text = sort_line.Get_all_text(result)
+    array_result = sort_line.get_all_result(result)
     # with open("text.txt", "a", encoding='utf-8') as file:
     #     file.write(path)
     #     file.write("\n")
@@ -45,7 +46,7 @@ def detect_text(content):
             "{}\nFor more info on error messages, check: "
             "https://cloud.google.com/apis/design/errors".format(response.error.message)
         )
-    return text
+    return array_result
     
 # folder_path = "./imgTest/"
 # for filename in os.listdir(folder_path):

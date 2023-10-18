@@ -6,7 +6,7 @@ api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # Reg
 number_company_list = [r"T\d{13}"]
-phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}']
+phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
 day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
 small_price_list = [r"小.*計"]
@@ -49,12 +49,15 @@ class ReceiptInfo:
         for element in dt_element:
             if "事業者名" in element.text:
                 if element.find('a', class_='result',href=lambda href: href and regname in href):
-                    company_name = element.text
+                    company_name = element.text         
         return company_name.replace("事業者名：", "")
         
     def get_company_name(self, phonenumber):
         company_name = ""
         phonenumber = re.sub(r'[()\-]', '_', phonenumber)
+        if phonenumber.count("_") == 1:
+            phonenumber = phonenumber.replace("_", "")
+            phonenumber = f"{phonenumber[:4]}_{phonenumber[4:7]}_{phonenumber[7:]}"
         regname = "numberinfo_{}.html".format(phonenumber).replace("__", "_")
         params = {
         'number': phonenumber
@@ -83,9 +86,10 @@ class ReceiptInfo:
             val_tmp = []
             price_tmp = self.find_val(self.lines[pos], price_list)
             name_tmp = self.lines[pos].replace(price_tmp, "")
-            val_tmp.append(name_tmp)
-            val_tmp.append(price_tmp)
-            muti_val.append(val_tmp)
+            if len(price_tmp) > 0:
+                val_tmp.append(name_tmp)
+                val_tmp.append(price_tmp)
+                muti_val.append(val_tmp)
         return muti_val
     
     def get_item_index_loop(self, index):
@@ -179,8 +183,8 @@ class ReceiptInfo:
             if title_idx == 13 and total_check == True:
                 break
 
-            if title_idx == 14 and (small_check == False or total_check == True) :
-                continue
+            # if title_idx == 14 and (small_check == False or total_check == True) :
+            #     continue
 
             if title_idx == 15 and total_check == True:
                 index = idx
@@ -229,11 +233,12 @@ class ReceiptInfo:
             # val = self.lines[index]
 
         if title_idx == 16:
-            # val = self.find_val(self.lines[index], price_list)
-            val = self.lines[index]
+             muti_val = self.get_muti_val(array_text)
+            # val = self.lines[index]
 
         if index == -1:
             val = ""
+            
         result_arr = []
         if len(muti_val) > 0:
             result_arr.append("[{}]\n".format(receipt_keys[title_idx]))
@@ -243,14 +248,32 @@ class ReceiptInfo:
         else: 
             if len(val) > 0:  
                 result_arr.append("[{}]: {}\n".format(receipt_keys[title_idx], val))
-        return result_arr          
+        return result_arr
+
+    def call_houjin_number(self, company_number):
+        url = "https://api.houjin-bangou.nta.go.jp/1/num"
+        params = {
+            "id": "KSeJztmzMbGZA",
+            "number": company_number,
+            "type": "01",
+            "history": "0"
+        }
+        company_name = ""
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            data = response.text.strip().split(',')  # Chuyển đổi phản hồi thành đối tượng JSON
+            company_name = data[9].replace("\"", "")
+        return "[取引先]： {}\n".format(company_name)          
     
     def getInfo(self):
         infoVal = []
-        # 取引先
+        # 適格請求書発行者番号
         company_number = "".join(self.get_partern(number_company_list, 0))
         # 取引先
         company_name = "".join(self.get_partern(phone_match_list, 1))
+        if len(company_name) == 0:
+            company_name = self.call_houjin_number(re.sub(r'[\[適格請求書発行者番号\]: T\n]', '', company_number))
         # 取引日付
         receipt_day = "".join(self.get_partern(day_match_list, 2))
         # 小計金額
@@ -282,8 +305,9 @@ class ReceiptInfo:
         
 def getResult(file_byte_data):
     # start_time = time.time()
-    content = vision_doc_detect.detect_text(file_byte_data).strip().split('\n')
-    obj = ReceiptInfo(content)
+    content = vision_doc_detect.detect_text(file_byte_data)
+    all_text = [item[0] for item in content]
+    obj = ReceiptInfo(all_text)
     return obj.getInfo()
     # end_time = time.time()
     # elapsed_time = end_time - start_time
