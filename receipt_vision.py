@@ -9,7 +9,7 @@ api_url = 'http://www.jpnumber.com/searchnumber.do?'
 number_company_list = [r"T\d{13}"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
-day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
+day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}']
 small_price_list = [r"小.*計|お.*買.*上"]
 tax_price_list = [r".*外.*税|.*内.*税|.*消.*費.*税|.*税.*金|.*税.*額|8%対象|10%対象"]
 discount_price_list = [r".*値.*引|.*奉.*仕.*額"]
@@ -242,13 +242,10 @@ class ReceiptInfo:
             
         result_arr = []
         if len(muti_val) > 0:
-            # result_arr.append("[{}]\n".format(receipt_keys[title_idx]))
             for e in muti_val:
                 data = []
                 data.append(e[0])
                 data.append(e[1])
-                # result_arr.append("{}:{} {}\n".format(receipt_keys[title_idx],e[0], e[1]))
-                # result_arr.append("{}: {}\n".format(e[0], e[1]))   
                 result_arr.append(data)   
         else: 
             if len(val) > 0:  
@@ -276,13 +273,12 @@ class ReceiptInfo:
         infoVal = {
         }
         # 適格請求書発行者番号
-        
         company_number = self.get_partern(number_company_list, 0)
         infoVal[receipt_keys[0]] = company_number
         # 取引先
         company_name = self.get_partern(phone_match_list, 1)
         if len(company_name) == 0:
-            company_name = self.call_houjin_number(re.sub(r'T', '', company_number))
+            company_name = self.call_houjin_number(re.sub(r'T', '', company_number[0]))
         infoVal[receipt_keys[1]] = company_name
         # 取引日付
         infoVal[receipt_keys[2]] = self.get_partern(day_match_list, 2)
