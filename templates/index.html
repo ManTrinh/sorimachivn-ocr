@@ -79,6 +79,11 @@
             max-width: 400px;
             /* Đặt chiều cao tối đa để có thanh cuộn khi cần thiết */
         }
+
+        .json-key {
+            color: blue;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -115,12 +120,13 @@
                 method: 'POST',
                 body: formData,
             })
-                .then(response => response.text())
+                .then(response => response.json())
                 .then(data => {
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         imagePreview.src = e.target.result;
-                        resultDiv.textContent = data;
+                        // resultDiv.textContent = data;
+                        resultDiv.innerHTML = highlightJSONKeys(data);
                     };
                     reader.readAsDataURL(e.target.files[0]);
                 })
@@ -128,6 +134,36 @@
                     console.error('Lỗi:', error);
                 });
         });
+
+        function highlightJSONKeys(data) {
+            let resultHTML = '<ul>';
+            for (let key in data) {
+                if (data.hasOwnProperty(key)) {
+                    resultHTML += '<li><span class="json-key">' + key + '</span>: ';
+                    if (Array.isArray(data[key])) {
+                        resultHTML += '<ul>';
+                        data[key].forEach(value => {
+                            if(Array.isArray(value))
+                            {
+                                item = value.join(': ')
+                               resultHTML += '<li>' + item + '</li>';                           
+                            }
+                            else
+                            {
+                                resultHTML += '<li>' + value + '</li>';
+                            }
+                        });
+                        resultHTML += '</ul>';
+                    }
+                    else {
+                        resultHTML += data[key];
+                    }
+                    resultHTML += '</li>';
+                }
+            }
+            resultHTML += '</ul>';
+            return resultHTML;
+        }
     </script>
 </body>
 

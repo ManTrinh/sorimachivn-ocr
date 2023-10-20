@@ -2,6 +2,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import vision_doc_detect
+import json
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # Reg
@@ -9,10 +10,10 @@ number_company_list = [r"T\d{13}"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 # day_match_list = [r'\d{4}[/年-]\d{1,2}[/月-]\d{1,2}[日]?']
 day_match_list = [r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]']
-small_price_list = [r"小.*計"]
-tax_price_list = [r".*外.*税|.*内.*税|.*消.*費.*税|.*税.*金"]
+small_price_list = [r"小.*計|お.*買.*上"]
+tax_price_list = [r".*外.*税|.*内.*税|.*消.*費.*税|.*税.*金|.*税.*額|8%対象|10%対象"]
 discount_price_list = [r".*値.*引|.*奉.*仕.*額"]
-total_price_list = [r".*合.*計"]
+total_price_list = [r"(?<!.)合.*計"]
 
 # Special
 # price_list = [r"(¥\d+,\d+|¥\d+|¥-\d+|\d+円)"]
@@ -241,13 +242,18 @@ class ReceiptInfo:
             
         result_arr = []
         if len(muti_val) > 0:
-            result_arr.append("[{}]\n".format(receipt_keys[title_idx]))
+            # result_arr.append("[{}]\n".format(receipt_keys[title_idx]))
             for e in muti_val:
+                data = []
+                data.append(e[0])
+                data.append(e[1])
                 # result_arr.append("{}:{} {}\n".format(receipt_keys[title_idx],e[0], e[1]))
-                result_arr.append("{}: {}\n".format(e[0], e[1]))   
+                # result_arr.append("{}: {}\n".format(e[0], e[1]))   
+                result_arr.append(data)   
         else: 
             if len(val) > 0:  
-                result_arr.append("[{}]: {}\n".format(receipt_keys[title_idx], val))
+                # result_arr.append("[{}]: {}\n".format(receipt_keys[title_idx], val))
+                result_arr.append(val)
         return result_arr
 
     def call_houjin_number(self, company_number):
@@ -264,44 +270,58 @@ class ReceiptInfo:
         if response.status_code == 200:
             data = response.text.strip().split(',')  # Chuyển đổi phản hồi thành đối tượng JSON
             company_name = data[9].replace("\"", "")
-        return "[取引先]： {}\n".format(company_name)          
+        return company_name         
     
     def getInfo(self):
-        infoVal = []
+        infoVal = {
+        }
         # 適格請求書発行者番号
-        company_number = "".join(self.get_partern(number_company_list, 0))
+        
+        company_number = self.get_partern(number_company_list, 0)
+        infoVal[receipt_keys[0]] = company_number
         # 取引先
-        company_name = "".join(self.get_partern(phone_match_list, 1))
+        company_name = self.get_partern(phone_match_list, 1)
         if len(company_name) == 0:
-            company_name = self.call_houjin_number(re.sub(r'[\[適格請求書発行者番号\]: T\n]', '', company_number))
+            company_name = self.call_houjin_number(re.sub(r'T', '', company_number))
+        infoVal[receipt_keys[1]] = company_name
         # 取引日付
-        receipt_day = "".join(self.get_partern(day_match_list, 2))
+        infoVal[receipt_keys[2]] = self.get_partern(day_match_list, 2)
         # 小計金額
-        small_price = "".join(self.get_partern(small_price_list, 12))    
+        small_price = self.get_partern(small_price_list, 12)
+        infoVal[receipt_keys[12]] = small_price    
         # 小計消費税金額
-        tax1 = "".join(self.get_partern(tax_price_list, 13))
+        tax1 = self.get_partern(tax_price_list, 13)
+        infoVal[receipt_keys[13]] = tax1
         # 小計値引き額
-        discount1 = "".join(self.get_partern(discount_price_list, 14))
+        discount1 = self.get_partern(discount_price_list, 14)
+        infoVal[receipt_keys[14]] = discount1
         #合計金額
-        total_price = "".join(self.get_partern(total_price_list, 15))    
+        total_price = self.get_partern(total_price_list, 15)
+        infoVal[receipt_keys[15]] = total_price    
         # 合計消費税金額
-        tax2 = "".join(self.get_partern(tax_price_list, 16))
+        tax2 = self.get_partern(tax_price_list, 16)
         if len(small_price) == 0 and len(tax1) > 0 and len(tax2) == 0:
-            tax2 = tax1.replace(receipt_keys[13], receipt_keys[16])
-            tax1 = ""
-        infoVal.append("{}{}{}{}{}{}{}{}".format(company_number, company_name, receipt_day, small_price, tax1, discount1, total_price, tax2))
-        infoVal.append("[明細情報]:\n")
-        infoVal.append(self.show_detail_item())
-        return "".join(infoVal)
+            tax2 = tax1
+            infoVal[receipt_keys[13]] = ""
+        infoVal[receipt_keys[16]] = tax2
+            
+        # infoVal.append("{}{}{}{}{}{}{}{}".format(company_number, company_name, receipt_day, small_price, tax1, discount1, total_price, tax2))
+        # infoVal.append("[明細情報]:\n")
+        infoVal["明細情報"] = self.show_detail_item()
+        json_data = json.dumps(infoVal, ensure_ascii=False, indent=4)
+        # file_path = "data.json"
+        # with open(file_path, 'w', encoding='utf-8') as json_file:
+        #     json_file.write(json_data)
+
+        return json_data
 
     def show_detail_item(self):
         detailVal = []
         test = self.get_partern(price_list, 4)
         for i in range(test[1], test[2], test[0]):
             for j in range(i, i + test[0]):
-                detailVal.append(self.lines[j])
-                detailVal.append("\n")      
-        return "".join(detailVal)
+                detailVal.append(self.lines[j])      
+        return detailVal
         
 def getResult(file_byte_data):
     # start_time = time.time()
