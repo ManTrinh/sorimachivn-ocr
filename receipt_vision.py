@@ -299,9 +299,9 @@ class ReceiptInfo:
         # infoVal.append("[明細情報]:\n")
         infoVal["明細情報"] = self.show_detail_item()
         json_data = json.dumps(infoVal, ensure_ascii=False, indent=4)
-        file_path = "data.json"
-        with open(file_path, 'w', encoding='utf-8') as json_file:
-            json_file.write(json_data)
+        # file_path = "data.json"
+        # with open(file_path, 'w', encoding='utf-8') as json_file:
+        #     json_file.write(json_data)
 
         return json_data
     
