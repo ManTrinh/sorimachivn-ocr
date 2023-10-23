@@ -18,7 +18,8 @@
 
         .container {
             display: flex;
-            max-width: 800px;
+            max-width: 1000px;
+            height: 100%;
             margin: 0 auto;
             background-color: #fff;
             border: 1px solid #ccc;
@@ -84,6 +85,30 @@
             color: blue;
             font-weight: bold;
         }
+
+        table {
+            margin: 0 auto;
+            /* Căn giữa bảng */
+            width: 80%;
+            /* Độ rộng của bảng (có thể điều chỉnh) */
+            border-collapse: collapse;
+            /* Loại bỏ khoảng cách giữa các ô dữ liệu */
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #000;
+            /* Đường viền cho bảng, cột, và ô dữ liệu */
+        }
+
+        th,
+        td {
+            padding: 10px;
+            /* Khoảng cách giữa nội dung và đường viền */
+            text-align: center;
+            /* Căn giữa nội dung trong ô dữ liệu */
+        }
     </style>
 </head>
 
@@ -102,6 +127,19 @@
         <div class="right-panel">
             <h2>Kết quả:</h2>
             <div id="result"></div>
+            <div id="table-container" style="display: none;">
+                <table border="1">
+                    <tr>
+                        <th>番号</th>
+                        <th>商品名</th>
+                        <th>単価</th>
+                        <th>単位</th>
+                        <th>金額</th>
+                        <th>割引⾦額</th>
+                        <th>消費税情報</th>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <!-- Trong phần head của trang HTML -->
@@ -110,12 +148,12 @@
         const fileInput = document.getElementById('file-input');
         const imagePreview = document.getElementById('image-preview');
         const resultDiv = document.getElementById('result');
+        var tableContainer = document.getElementById("table-container");
+        var table = document.querySelector("#table-container table");
 
         fileInput.addEventListener('change', (e) => {
-
             const formData = new FormData();
             formData.append('file', e.target.files[0]);
-
             fetch('/sorimachivn-ocr', {
                 method: 'POST',
                 body: formData,
@@ -127,6 +165,31 @@
                         imagePreview.src = e.target.result;
                         // resultDiv.textContent = data;
                         resultDiv.innerHTML = highlightJSONKeys(data);
+                        var details = data["明細情報"];
+                        if (details && details.length > 0) {
+                            while (table.rows.length > 1) {
+                                table.deleteRow(1);
+                            }
+                            tableContainer.style.display = "block";
+                            for (var i = 0; i < details.length; i++) {
+                                var row = table.insertRow(-1);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                var cell3 = row.insertCell(2);
+                                var cell4 = row.insertCell(3);
+                                var cell5 = row.insertCell(4);
+                                var cell6 = row.insertCell(5);
+                                var cell7 = row.insertCell(6);
+
+                                cell2.innerHTML = details[i].name;
+                                cell5.innerHTML = details[i].price;
+                            }
+                        } else {
+                            // tableContainer.innerHTML = "";
+                            while (table.rows.length > 1) {
+                                table.deleteRow(1);
+                            }
+                        }
                     };
                     reader.readAsDataURL(e.target.files[0]);
                 })
@@ -140,16 +203,17 @@
             for (let key in data) {
                 if (data.hasOwnProperty(key)) {
                     resultHTML += '<li><span class="json-key">' + key + '</span>: ';
+                    if (key === "明細情報") {
+                        continue;
+                    }
                     if (Array.isArray(data[key])) {
                         resultHTML += '<ul>';
                         data[key].forEach(value => {
-                            if(Array.isArray(value))
-                            {
+                            if (Array.isArray(value)) {
                                 item = value.join(': ')
-                               resultHTML += '<li>' + item + '</li>';                           
+                                resultHTML += '<li>' + item + '</li>';
                             }
-                            else
-                            {
+                            else {
                                 resultHTML += '<li>' + value + '</li>';
                             }
                         });

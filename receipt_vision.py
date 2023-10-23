@@ -93,64 +93,58 @@ class ReceiptInfo:
                 muti_val.append(val_tmp)
         return muti_val
     
+    def get_total_idx(self):
+        total_idx = -1
+        for idx, line in enumerate(self.lines):
+            total_price = self.find_val(line, total_price_list)
+            if len(total_price) > 0:
+                total_idx = idx
+                break
+        return total_idx
+    
+    def get_small_idx(self):
+        small_idx = -1
+        for idx, line in enumerate(self.lines):
+            total_price = self.find_val(line, small_price_list)
+            if len(total_price) > 0:
+                small_idx = idx
+                break
+        return small_idx
+    
+    def get_small_tax_idx(self):
+        tax_idx = -1
+        for idx, line in enumerate(self.lines):
+            total_price = self.find_val(line, tax_price_list)
+            if len(total_price) > 0:
+                tax_idx = idx
+                break
+        return tax_idx
+    
+    def get_date_idx(self):
+        date_idx = -1
+        for idx, line in enumerate(self.lines):
+            total_price = self.find_val(line, day_match_list)
+            if len(total_price) > 0:
+                date_idx = idx
+                break
+        return date_idx
+     
     def get_item_index_loop(self, index):
         index_loop = []
-        next_price_item = ""
-        next_price_idx = -1
-        first_line_item_idx = -1
-        item_loop = -1
-        itemCheck = False
-        totalCheck = False
-        smallCheck = False
-        taxCheck = False
-        total_price_idx = -1
-        small_price_idx = -1
-        tax_price_idx = -1
-        end_line_item_idx = -1
-        for idx, line in enumerate(self.lines):
-            next_price_item = self.find_val(line, price_list)
-            total_price = self.find_val(line, total_price_list)
-            small_price = self.find_val(line, small_price_list)
-            tax_price = self.find_val(line, tax_price_list)
-            if len(next_price_item) > 0 and itemCheck == False and idx > index:
-                itemCheck = True
-                next_price_idx = idx
-                item_loop = next_price_idx - index
+        arrTmp = []
+        first_line = -1
+        end_line = -1
 
-            if len(tax_price) > 0 and taxCheck == False:
-                tax_price_idx = idx
-                taxCheck = True
-
-            if len(small_price) > 0 and smallCheck == False:
-                small_price_idx = idx
-                smallCheck = True    
-
-            if len(total_price) > 0 and totalCheck == False:
-                total_price_idx = idx
-                totalCheck = True
-
-
-        if small_price_idx > 0:
-            end_line_item_idx = small_price_idx
-        if small_price_idx < 0 and tax_price_idx > 0 and tax_price_idx < total_price_idx:
-            end_line_item_idx = tax_price_idx
-        if small_price_idx < 0 and tax_price_idx > 0 and total_price_idx < tax_price_idx:
-            end_line_item_idx = total_price_idx
-        if tax_price_idx < 0 and small_price_idx < 0 and total_price_idx > 0:
-            end_line_item_idx = total_price_idx    
-
-        distance = end_line_item_idx % item_loop      
-        end_line_item_idx = end_line_item_idx - distance
-
-        if item_loop > 1:
-            first_line_item_idx = index - item_loop + 1
-        else:        
-            first_line_item_idx = index
-        index_loop.append(item_loop)
-        index_loop.append(first_line_item_idx)        
-        index_loop.append(end_line_item_idx)        
+        first_line = self.get_date_idx() + 1
+        arrTmp.append(self.get_total_idx())
+        arrTmp.append(self.get_small_idx())
+        arrTmp.append(self.get_small_tax_idx())
+        filtered_numbers = [num for num in arrTmp if num != -1]
+        end_line = min(filtered_numbers)
+        index_loop.append(first_line)
+        index_loop.append(end_line)
         return index_loop
-    
+  
     def get_partern(self, type, title_idx):
         val = ""
         index = -1
@@ -305,19 +299,32 @@ class ReceiptInfo:
         # infoVal.append("[明細情報]:\n")
         infoVal["明細情報"] = self.show_detail_item()
         json_data = json.dumps(infoVal, ensure_ascii=False, indent=4)
-        # file_path = "data.json"
-        # with open(file_path, 'w', encoding='utf-8') as json_file:
-        #     json_file.write(json_data)
+        file_path = "data.json"
+        with open(file_path, 'w', encoding='utf-8') as json_file:
+            json_file.write(json_data)
 
         return json_data
+    
+    def conv_line_to_turtle(self, text):
+        detailItem = {}
+        detailItem["name"] = ""
+        price = self.find_val(text, price_list)
+        detailItem["price"] = price
+        if len(price) > 0:
+            detailItem["name"] = text.replace(price, "")
+        return detailItem
 
     def show_detail_item(self):
-        detailVal = []
-        test = self.get_partern(price_list, 4)
-        for i in range(test[1], test[2], test[0]):
-            for j in range(i, i + test[0]):
-                detailVal.append(self.lines[j])      
-        return detailVal
+        arrVal = []
+        itemTmp = {}
+        arr_idx_loop = self.get_partern(price_list, 4)
+        for i in range(arr_idx_loop[0], arr_idx_loop[1]):
+            bCheck = self.find_val(self.lines[i], price_list)
+            if len(bCheck) == 0:
+                continue
+            itemTmp = self.conv_line_to_turtle(self.lines[i])
+            arrVal.append(itemTmp)          
+        return arrVal
         
 def getResult(file_byte_data):
     # start_time = time.time()
