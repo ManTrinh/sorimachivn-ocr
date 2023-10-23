@@ -140,7 +140,10 @@ class ReceiptInfo:
         arrTmp.append(self.get_small_idx())
         arrTmp.append(self.get_small_tax_idx())
         filtered_numbers = [num for num in arrTmp if num != -1]
-        end_line = min(filtered_numbers)
+        if len(filtered_numbers) > 0:
+            end_line = min(filtered_numbers)
+        else:
+            return index_loop    
         index_loop.append(first_line)
         index_loop.append(end_line)
         return index_loop
@@ -318,6 +321,8 @@ class ReceiptInfo:
         arrVal = []
         itemTmp = {}
         arr_idx_loop = self.get_partern(price_list, 4)
+        if len(arr_idx_loop) == 0:
+            return arrVal
         for i in range(arr_idx_loop[0], arr_idx_loop[1]):
             bCheck = self.find_val(self.lines[i], price_list)
             if len(bCheck) == 0:
