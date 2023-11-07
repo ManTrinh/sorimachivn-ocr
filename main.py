@@ -16,6 +16,17 @@ def call_function():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+@app.route('/sorimachivn-ocr-api', methods=['POST'])
+def get_json():
+    try:
+        file = request.files['file']
+        file_byte_data = file.read()
+        result = receipt_vision.getAPI(file_byte_data)
+        return result
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
