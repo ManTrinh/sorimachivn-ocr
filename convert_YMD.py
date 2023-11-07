@@ -37,8 +37,8 @@ def get_gengo_year(year,md):
 
 def japanese_calendar_converter(text):
     year_ = 0
-    month_ = int(text.split("年")[1].split("月")[0])
-    day_ = int(text.split("月")[1].split("日")[0])
+    month_ = int(re.sub(r'\D', '', text.split("年")[1].split("月")[0]))
+    day_ = int(re.sub(r'\D', '', text.split("月")[1].split("日")[0]))
     md_val = month_*100 + day_
     # Tách năm, tháng và ngày từ chuỗi
     if len(text.split("年")[0]) == 2:
@@ -74,23 +74,31 @@ def japanese_calendar_converter(text):
 
 def conv_str_to_date(text):
     # Sử dụng hàm strptime để chuyển chuỗi ngày tháng thành đối tượng datetime
-    year_ = int(text.split("年")[0].split("年")[0]) 
-    month_ = int(text.split("年")[1].split("月")[0])
-    day_ = int(text.split("月")[1].split("日")[0])
+    year_ = int(re.sub(r'\D', '', text.split("年")[0].split("年")[0]))
+    month_ = int(re.sub(r'\D', '', text.split("年")[1].split("月")[0]))
+    day_ = int(re.sub(r'\D', '', text.split("月")[1].split("日")[0]))
     return datetime.date(year_, month_, day_)
 
 
 def json_date_result(text):
     if len(text) == 0:
         return formatted
-    year_val = text.split("年")[0].split("年")[0]
-    if re.match(r'^\d{4}$', year_val):
-        date_val = conv_str_to_date(text)
+    if re.search(r'[年月日]', text):
+        year_val = text.split("年")[0].split("年")[0]
+        if re.match(r'^\d{4}$', year_val):
+            date_val = conv_str_to_date(text)
+        else:
+            date_val = japanese_calendar_converter(text)
+        if date_val is not None:
+            formatted["day"] = "{}".format(f"{date_val.day:02}")      
+            formatted["month"] = "{}".format(f"{date_val.month:02}")  
+            formatted["year"] = "{}".format(date_val.year)    
     else:
-        date_val = japanese_calendar_converter(text)
-    if date_val is not None:
-        formatted["day"] = "{}".format(f"{date_val.day:02}")      
-        formatted["month"] = "{}".format(f"{date_val.month:02}")  
-        formatted["year"] = "{}".format(date_val.year)    
-    return formatted    
+        arr_format = []
+        arr_format = text.split("/")
+        if len(arr_format) > 0:
+            formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
+            formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
+            formatted["year"] = "{}".format(arr_format[0])
+    return formatted            
 

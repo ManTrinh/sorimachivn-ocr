@@ -29,8 +29,8 @@
 def are_boxes_on_same_row(box1, box2, tolerance=20):
     # center_y1 = ((box1[0][1]) + (box1[1][1])) / 2
     # center_y2 = ((box2[0][1]) + (box2[1][1])) / 2
-    center_y1 = ((box1[1][1])) / 2
-    center_y2 = ((box2[1][1])) / 2
+    center_y1 = ((box1[1][1]))
+    center_y2 = ((box2[1][1]))
     return abs(center_y1 - center_y2) <= tolerance
 
 # /******************************************************************************

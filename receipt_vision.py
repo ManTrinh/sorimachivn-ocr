@@ -363,7 +363,7 @@ class ReceiptInfo:
         # 合計金額
         total_price = self.get_partern(15)
         if len(total_price) == 0:
-            total_price = self.get_sub_total()
+            total_price = "{}".format(self.get_sub_total())
         infoVal[receipt_keys[15]] = total_price
         # 合計消費税金額
         tax2 = self.get_partern(16)
@@ -455,7 +455,8 @@ class ReceiptInfo:
     def get_price_json_info(self, resultText):
         jsonFormat = {}
         jsonFormatSub = {}
-        resultText = "".join(resultText)
+        if type(resultText) is list:
+            resultText = "".join(resultText)
         jsonFormatSub["value"] = "{}".format(int(re.sub(r'\D', '', resultText)))
         jsonFormat["formatted"] = jsonFormatSub
         jsonFormat["text"] = resultText
@@ -479,8 +480,9 @@ class ReceiptInfo:
         storeInfoVal["companyId"] = self.get_json_info(company_number)
         # infoVal[receipt_keys[0]] = company_number
         # 取引先
-        company_name = self.get_partern(1)
-        if len(company_name) == 0 and len(company_number) > 0:
+        # company_name = self.get_partern(1)
+        company_name = ""
+        if len(company_number) > 0:
             company_name = self.call_houjin_number(
                 re.sub(r'T', '', company_number[0]))
             branch_name = ""
@@ -506,7 +508,7 @@ class ReceiptInfo:
         # 合計金額
         total_price = self.get_partern(15)
         if len(total_price) == 0:
-            total_price = self.get_sub_total()
+            total_price = "{}".format(self.get_sub_total())
         totalPrice["price"] = self.get_price_json_info(total_price)
         # infoVal[receipt_keys[15]] = total_price
         # 合計消費税金額
