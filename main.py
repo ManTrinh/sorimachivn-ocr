@@ -5,6 +5,7 @@ import receipt_vision
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
+version = "V1.0.0.0"
 
 @app.route('/sorimachivn-ocr', methods=['POST'])
 def call_function():
@@ -16,6 +17,14 @@ def call_function():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+@app.route('/sorimachivn-ocr-version', methods=['GET'])
+def call_version():
+    try:
+        return jsonify({'version': str(version)})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})    
     
 @app.route('/sorimachivn-ocr-api', methods=['POST'])
 def get_json():
