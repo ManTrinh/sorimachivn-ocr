@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 import os
 import receipt_vision
+import json
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
-version = "V1.0.0.0"
+version = r"V1.0.0.0"
 
 @app.route('/sorimachivn-ocr', methods=['POST'])
 def call_function():
@@ -21,7 +22,9 @@ def call_function():
 @app.route('/sorimachivn-ocr-version', methods=['GET'])
 def call_version():
     try:
-        return jsonify({'version': str(version)})
+        ver_json = {}
+        ver_json["ver"] = version
+        return json.dumps(ver_json, ensure_ascii=False, indent=4)
 
     except Exception as e:
         return jsonify({'error': str(e)})    

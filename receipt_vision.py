@@ -117,10 +117,10 @@ class ReceiptInfo:
         phonenumber = re.sub(r'[()\-]', '_', phonenumber)
         if phonenumber.count("_") == 1:
             phonenumber = phonenumber.replace("_", "")
-            phonenumber = f"{phonenumber[:4]}_{phonenumber[4:7]}_{phonenumber[7:]}"
+            phonenumber = f"{phonenumber[:4]}_{phonenumber[4:7]}_{phonenumber[7:]}"    
         regname = "numberinfo_{}.html".format(phonenumber).replace("__", "_")
         params = {
-            'number': phonenumber
+            'number': phonenumber.replace("_", "")
         }
         response = requests.get(api_url, params=params, headers={
             'User-Agent': 'Chrome/117.0.0.0',
