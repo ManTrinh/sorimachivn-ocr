@@ -49,7 +49,7 @@ def japanese_calendar_converter(text):
         for era, era_data in eraDict.items():
             if era == "令和":
                 era_data.append(current_year-era_data[1]+1)
-        if year_ <= compare_year:
+        if year_ <= compare_year and year_ > eraDict["令和"][3]:
             return datetime.date(2000 + year_, month_, day_)
         else:
             text = "{}{}".format(get_gengo_year(year_, md_val),text)
