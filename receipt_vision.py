@@ -17,7 +17,7 @@ import convert_YMD
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # 正規表現
-number_company_list = [r"T\d{13}"]
+number_company_list = [r"T\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 day_match_list = [
     r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}']
@@ -56,47 +56,6 @@ meta = {
         "width": 312
     }
 }
-
-boundingBoxes = [
-    [
-        [
-            20,
-            98
-        ],
-        [
-            245,
-            105
-        ],
-        [
-            245,
-            129
-        ],
-        [
-            19,
-            123
-        ]
-    ],
-    [
-        [
-            21,
-            115
-        ],
-        [
-            158,
-            125
-        ],
-        [
-            157,
-            146
-        ],
-        [
-            19,
-            136
-        ]
-    ]
-]
-
-confidenceScore = 0.9955
 
 class ReceiptInfo:
     def __init__(self, lines) -> None:
@@ -444,12 +403,26 @@ class ReceiptInfo:
         text = " ".join(tmp)
         self.test(text)
         return arrVal
+    
+    def find_houjin_number(self, resultText):
+        val = ""
+        if len(resultText) > 0:
+            val = "".join(re.findall(r'\d+', "".join(resultText)))
+            if len(val) == 13:
+                val = "T{}".format(val)
+        return val    
 
-    def get_json_info(self, resultText):
+    def get_json_info(self, resultText, type):
         jsonFormat = {}
+        val = ""
         # jsonFormat["boundingBoxes"] = boundingBoxes
         # jsonFormat["confidenceScore"] = confidenceScore
-        jsonFormat["text"] = "".join(resultText)
+        if type == 0:
+            # T13 Number
+            val = self.find_houjin_number(resultText)
+        else:
+            val = "".join(resultText)    
+        jsonFormat["text"] = val
         return jsonFormat
     
     def get_price_json_info(self, resultText):
@@ -477,21 +450,21 @@ class ReceiptInfo:
         paymentInfo = {}
         # 適格請求書発行者番号
         company_number = self.get_partern(0)
-        storeInfoVal["companyId"] = self.get_json_info(company_number)
+        storeInfoVal["companyId"] = self.get_json_info(company_number, 0)
         # infoVal[receipt_keys[0]] = company_number
         # 取引先
         # company_name = self.get_partern(1)
         company_name = ""
         if len(company_number) > 0:
             company_name = self.call_houjin_number(
-                re.sub(r'T', '', company_number[0]))
+                 re.sub(r'T', '', self.find_houjin_number(company_number)))
             branch_name = ""
             if self.get_branch() > -1:
                 branch_name = self.find_val(
                     self.lines[self.get_branch()], branch_list)
             if len(branch_name) > 0:
                 company_name = " ".join([company_name, branch_name])
-        storeInfoVal["name"] = self.get_json_info(company_name)
+        storeInfoVal["name"] = self.get_json_info(company_name, 1)
         # infoVal[receipt_keys[1]] = company_name
         # 取引日付
         # infoVal[receipt_keys[2]] = self.get_partern(2)

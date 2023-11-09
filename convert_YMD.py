@@ -21,7 +21,7 @@ eraDict = {
     "令和": ["R",2019,501],
 }
 
-formatted = {}
+# formatted = {}
 
 def get_gengo_year(year,md):
     gengo = ""
@@ -83,16 +83,26 @@ def conv_str_to_date(text):
     day_ = int(re.sub(r'\D', '', text.split("月")[1].split("日")[0]))
     return datetime.date(year_, month_, day_)
 
-def conv_gengo_char(val):
+def conv_gengo_char(allVal):
     gengo_year = 0
+    bFlag = False
+    val = allVal[0]
+    
     count_year = int("".join(re.findall(r'\d', val)))
     for era, era_data in eraDict.items():
         if era_data[0] in val:
             gengo_year = era_data[1] + count_year - 1
+            bFlag = True
             break
+    if bFlag == False and count_year < 100:
+        #From 2000
+        text = "{}年{}月{}日".format(count_year, allVal[1], allVal[2])
+        date_val = japanese_calendar_converter(text)
+        gengo_year = date_val.year
     return gengo_year
 
 def json_date_result(text):
+    formatted = {}
     if len(text) == 0:
         return formatted
     if re.search(r'[年月日]', text):
@@ -110,7 +120,7 @@ def json_date_result(text):
         arr_format = text.split("/")
         gengo_year = ""
         if len(arr_format) > 0:
-            gengo_year = conv_gengo_char(arr_format[0])
+            gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
                 arr_format[0] = gengo_year
             formatted["day"] = "{}".format(f"{arr_format[2]:02}")      

@@ -6,7 +6,7 @@ import json
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
-version = r"V1.0.0.1"
+version = r"V1.0.0.2"
 
 @app.route('/sorimachivn-ocr', methods=['POST'])
 def call_function():
