@@ -8,6 +8,8 @@
 #  Comment     : 
 # ******************************************************************************/
 
+import cv2
+import numpy as np
 # Data Example
 # bounding_boxes = [
 #     [[(155, 260), (1401, 260), (1401, 2635), (155, 2635)], "Text1"],
@@ -37,8 +39,7 @@ def are_boxes_on_same_row(box1, box2, tolerance):
 
     return abs(center_y1 - center_y2) < tolerance
 
-import cv2
-import numpy as np
+
 def find_text_threshold(image):
     # Chuyển ảnh sang ảnh đen trắng
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
