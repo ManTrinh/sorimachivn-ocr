@@ -26,15 +26,37 @@
 #  Update      :
 #  Comment     : 
 # ******************************************************************************/
-def are_boxes_on_same_row(box1, box2, tolerance=20):
+def are_boxes_on_same_row(box1, box2, tolerance):
     # center_y1 = ((box1[0][1]) + (box1[1][1])) / 2
     # center_y2 = ((box2[0][1]) + (box2[1][1])) / 2
     center_y1 = ((box1[1][1]))
-    center_y2 = ((box2[1][1]))
+    center_y2 = ((box2[1][1]))    
+    # tolerance = ((box1[1][1])) + 
     # h1 = (box1[2][1]) - (box1[0][1])
     # h2 = (box2[2][1]) - (box2[0][1])
 
-    return abs(center_y1 - center_y2) <= tolerance
+    return abs(center_y1 - center_y2) < tolerance
+
+import cv2
+import numpy as np
+def find_text_threshold(image):
+    # Chuyển ảnh sang ảnh đen trắng
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Phát hiện cạnh sử dụng phương pháp Canny
+    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+
+    # Tính toán ngưỡng trung bình dựa trên giá trị pixel trong vùng quan tâm
+    roi = gray[edges != 0]
+    average_threshold = np.mean(roi)
+
+    # Chuyển đổi ngưỡng từ kiểu float sang kiểu int
+    int_threshold = int(average_threshold)
+    if int_threshold < 100:
+        int_threshold = 20
+    else:
+        int_threshold = 10
+    return int_threshold
 
 # /******************************************************************************
 #  All Rights Reserved. Copyright(c) 2023
@@ -45,14 +67,21 @@ def are_boxes_on_same_row(box1, box2, tolerance=20):
 #  Update      :
 #  Comment     : 
 # ******************************************************************************/
-def get_all_result(bounding_boxes):
+def get_all_result(bounding_boxes, content):
+    # Chuyển đổi chuỗi byte thành mảng numpy
+    np_data = np.frombuffer(content, np.uint8)
+
+# Đọc hình ảnh từ mảng numpy
+    image = cv2.imdecode(np_data, cv2.IMREAD_COLOR)
+    thresh_hold = find_text_threshold(image)
+
     sorted_boxes = []
     for box in bounding_boxes:
         added = False
         for row in sorted_boxes:
             boxTmp = box[0]
             boxRowTmp = row[0][0]
-            if are_boxes_on_same_row(boxTmp, boxRowTmp):
+            if are_boxes_on_same_row(boxTmp, boxRowTmp, thresh_hold):
                 row.append(box)
                 added = True
                 break

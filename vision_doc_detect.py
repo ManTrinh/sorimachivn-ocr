@@ -25,7 +25,6 @@ def detect_text(content):
 
     # 使用する必要があるデータをグループ化する
     result = []
-    content = []
     idx = 0
     for text in texts:
         if idx == 0:
@@ -40,7 +39,7 @@ def detect_text(content):
         result.append(arrVal)
 
     # 関数はデータの各行を返します
-    array_result = sort_line.get_all_result(result)
+    array_result = sort_line.get_all_result(result, content)
     if response.error.message:
         raise Exception(
             "{}\nシステムエラー: "
