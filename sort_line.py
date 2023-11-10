@@ -55,7 +55,7 @@ def find_text_threshold(image):
     if int_threshold < 100:
         int_threshold = 20
     else:
-        int_threshold = 10
+        int_threshold = 13
     return int_threshold
 
 # /******************************************************************************

@@ -25,7 +25,7 @@ small_price_list = [r"小.*計|お.*買.*上.*¥"]
 tax_price_list = [
     r".*外.*税.*¥|.*内.*税.*¥|.*消.*費.*税.*¥|.*税.*金.*¥|.*税.*額.*¥|8%対象.*¥|10%対象.*¥"]
 discount_price_list = [r".*値.*引|.*奉.*仕.*額"]
-total_price_list = [r"(?<!.)合.*計"]
+total_price_list = [r"(?<!.)合.*計|領.*収.*金.*額"]
 price_list = [r"[¥\\\\][0-9,.]+|\d{1,3}(?:[,.]\d{3})+|[0-9,.]+円|\d{1,9}"]
 branch_list = [r".*店"]
 
@@ -410,6 +410,8 @@ class ReceiptInfo:
             val = "".join(re.findall(r'\d+', "".join(resultText)))
             if len(val) == 13:
                 val = "T{}".format(val)
+            if len(val) == 14:
+                val = "T{}".format(val[1:]) 
         return val    
 
     def get_json_info(self, resultText, type):
