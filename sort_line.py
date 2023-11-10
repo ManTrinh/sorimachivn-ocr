@@ -8,8 +8,8 @@
 #  Comment     : 
 # ******************************************************************************/
 
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 # Data Example
 # bounding_boxes = [
 #     [[(155, 260), (1401, 260), (1401, 2635), (155, 2635)], "Text1"],
@@ -40,24 +40,24 @@ def are_boxes_on_same_row(box1, box2, tolerance):
     return abs(center_y1 - center_y2) < tolerance
 
 
-def find_text_threshold(image):
-    # Chuyển ảnh sang ảnh đen trắng
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# def find_text_threshold(image):
+#     # Chuyển ảnh sang ảnh đen trắng
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Phát hiện cạnh sử dụng phương pháp Canny
-    edges = cv2.Canny(gray, 50, 150, apertureSize=3)
+#     # Phát hiện cạnh sử dụng phương pháp Canny
+#     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
-    # Tính toán ngưỡng trung bình dựa trên giá trị pixel trong vùng quan tâm
-    roi = gray[edges != 0]
-    average_threshold = np.mean(roi)
+#     # Tính toán ngưỡng trung bình dựa trên giá trị pixel trong vùng quan tâm
+#     roi = gray[edges != 0]
+#     average_threshold = np.mean(roi)
 
-    # Chuyển đổi ngưỡng từ kiểu float sang kiểu int
-    int_threshold = int(average_threshold)
-    if int_threshold < 100:
-        int_threshold = 20
-    else:
-        int_threshold = 13
-    return int_threshold
+#     # Chuyển đổi ngưỡng từ kiểu float sang kiểu int
+#     int_threshold = int(average_threshold)
+#     if int_threshold < 100:
+#         int_threshold = 20
+#     else:
+#         int_threshold = 13
+#     return int_threshold
 
 # /******************************************************************************
 #  All Rights Reserved. Copyright(c) 2023
@@ -69,12 +69,12 @@ def find_text_threshold(image):
 #  Comment     : 
 # ******************************************************************************/
 def get_all_result(bounding_boxes, content):
-    # Chuyển đổi chuỗi byte thành mảng numpy
-    np_data = np.frombuffer(content, np.uint8)
+    # # Chuyển đổi chuỗi byte thành mảng numpy
+    # np_data = np.frombuffer(content, np.uint8)
 
-# Đọc hình ảnh từ mảng numpy
-    image = cv2.imdecode(np_data, cv2.IMREAD_COLOR)
-    thresh_hold = find_text_threshold(image)
+    # # Đọc hình ảnh từ mảng numpy
+    # image = cv2.imdecode(np_data, cv2.IMREAD_COLOR)
+    # thresh_hold = find_text_threshold(image)
 
     sorted_boxes = []
     for box in bounding_boxes:
@@ -82,7 +82,7 @@ def get_all_result(bounding_boxes, content):
         for row in sorted_boxes:
             boxTmp = box[0]
             boxRowTmp = row[0][0]
-            if are_boxes_on_same_row(boxTmp, boxRowTmp, thresh_hold):
+            if are_boxes_on_same_row(boxTmp, boxRowTmp, 20):
                 row.append(box)
                 added = True
                 break
