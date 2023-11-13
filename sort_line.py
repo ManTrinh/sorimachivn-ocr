@@ -53,11 +53,12 @@ def find_text_threshold(image):
 
     # Chuyển đổi ngưỡng từ kiểu float sang kiểu int
     int_threshold = int(average_threshold)
+    tmp_thresh = 0
     if int_threshold < 100:
-        int_threshold = 20
-    else:
-        int_threshold = 10
-    return int_threshold
+        tmp_thresh = 20  
+    else:    
+        tmp_thresh = 10
+    return tmp_thresh
 
 # /******************************************************************************
 #  All Rights Reserved. Copyright(c) 2023
