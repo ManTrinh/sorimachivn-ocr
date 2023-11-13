@@ -445,6 +445,7 @@ class ReceiptInfo:
         return jsonFormat
 
     def get_Service_Detect(self):
+        rootVal = []
         infoVal = {}
         resultVal = {}
         storeInfoVal = {}
@@ -500,7 +501,9 @@ class ReceiptInfo:
         
         infoVal["meta"] = meta
         infoVal["result"] = resultVal
-        json_data = json.dumps(infoVal, ensure_ascii=False, indent=4)
+        
+        rootVal.append(infoVal)
+        json_data = json.dumps(rootVal, ensure_ascii=False, indent=4)
 
         return json_data
 
