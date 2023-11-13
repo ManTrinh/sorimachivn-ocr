@@ -20,7 +20,8 @@ def detect_text(content):
     # Google から Vision API 呼び出しを行う
     client = vision.ImageAnnotatorClient()
     image = vision.Image(content=content)
-    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
+    # response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
+    response = client.document_text_detection(image=image)
     texts = response.text_annotations
 
     # 使用する必要があるデータをグループ化する
