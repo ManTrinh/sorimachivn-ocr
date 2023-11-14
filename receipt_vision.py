@@ -517,6 +517,6 @@ def getResult(file_byte_data):
 
 def getAPI(file_byte_data):
     content = vision_doc_detect.detect_text(file_byte_data)
-    all_text = [item[0] for item in content]
-    obj = ReceiptInfo(all_text)
+    # all_text = [item[0] for item in content]
+    obj = ReceiptInfo(content)
     return obj.get_Service_Detect()
