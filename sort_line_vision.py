@@ -28,7 +28,16 @@ def get_threshold_for_y_difference(annotations):
         if i == 0:
             continue
         differences.append(abs(annotations[i].avg_y - annotations[i - 1].avg_y))
-    return np.std(differences)
+    # Sử dụng hàm sum() để cộng tất cả các giá trị trong danh sách
+    total_sum = sum(differences)
+    
+    # Sử dụng hàm len() để lấy số lượng phần tử trong danh sách
+    list_length = len(differences)
+    
+    # Tính trung bình
+    average = total_sum / list_length    
+    # return np.std(differences)
+    return np.std(differences) - average
 
 def group_annotations(annotations, threshold):
     annotations.sort(key=attrgetter('avg_y'))
