@@ -21,8 +21,8 @@ def detect_text(content):
     # Google から Vision API 呼び出しを行う
     client = vision.ImageAnnotatorClient()
     image = vision.Image(content=content)
-    # response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
-    response = client.document_text_detection(image=image)
+    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
+    # response = client.document_text_detection(image=image)
 
     all_anotations = sort_line_vision.get_extended_annotations(response)
     threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations)
