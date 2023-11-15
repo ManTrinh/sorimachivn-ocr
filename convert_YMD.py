@@ -101,6 +101,9 @@ def conv_gengo_char(allVal):
         gengo_year = date_val.year
     return gengo_year
 
+def get_only_digits(value):
+    return ''.join(x for x in value if x.isdigit())
+
 def json_date_result(text):
     formatted = {}
     if len(text) == 0:
@@ -130,12 +133,12 @@ def json_date_result(text):
             # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
             # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
             # formatted["year"] = "{}".format(arr_format[0])
-            y_ = int(date_val.year)
-            m_ = int(date_val.month)
-            d_ = int(date_val.day)
+            y_ = int(get_only_digits(arr_format[2]))
+            m_ = int(get_only_digits(arr_format[1]))
+            d_ = int(get_only_digits(arr_format[0]))
 
             formatted["day"] = "{}".format(f"{d_:02}")      
             formatted["month"] = "{}".format(f"{m_:02}")  
             formatted["year"] = "{}".format(y_) 
-            
+
     return formatted
