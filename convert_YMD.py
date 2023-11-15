@@ -112,9 +112,13 @@ def json_date_result(text):
         else:
             date_val = japanese_calendar_converter(text)
         if date_val is not None:
-            formatted["day"] = "{}".format(f"{date_val.day:02}")      
-            formatted["month"] = "{}".format(f"{date_val.month:02}")  
-            formatted["year"] = "{}".format(date_val.year)    
+            y_ = int(date_val.year)
+            m_ = int(date_val.month)
+            d_ = int(date_val.day)
+
+            formatted["day"] = "{}".format(f"{d_:02}")      
+            formatted["month"] = "{}".format(f"{m_:02}")  
+            formatted["year"] = "{}".format(y_)    
     else:
         arr_format = []
         arr_format = text.split("/")
@@ -123,7 +127,15 @@ def json_date_result(text):
             gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
                 arr_format[0] = gengo_year
-            formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
-            formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
-            formatted["year"] = "{}".format(arr_format[0])
+            # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
+            # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
+            # formatted["year"] = "{}".format(arr_format[0])
+            y_ = int(date_val.year)
+            m_ = int(date_val.month)
+            d_ = int(date_val.day)
+
+            formatted["day"] = "{}".format(f"{d_:02}")      
+            formatted["month"] = "{}".format(f"{m_:02}")  
+            formatted["year"] = "{}".format(y_) 
+            
     return formatted
