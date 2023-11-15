@@ -37,6 +37,7 @@ def get_threshold_for_y_difference(annotations):
     # Tính trung bình
     average = total_sum / list_length    
     # return np.std(differences)
+    # return average
     return np.std(differences) - average
 
 def group_annotations(annotations, threshold):
