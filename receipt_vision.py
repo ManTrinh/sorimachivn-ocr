@@ -17,7 +17,7 @@ import convert_YMD
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # 正規表現
-number_company_list = [r"T\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+"]
+number_company_list = [r"T\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+|〒\d{13}|事.*業.*者.*番.*号.*\d+"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 day_match_list = [
     r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}|\b\d{4}-\d{2}-\d{2}\b']
@@ -408,7 +408,7 @@ class ReceiptInfo:
         val = ""
         if len(resultText) > 0:
             val = "".join(re.findall(r'\d+', "".join(resultText)))
-            if len(val) == 13:
+            if len(val) <= 13:
                 val = "T{}".format(val)
             if len(val) == 14:
                 val = "T{}".format(val[1:]) 

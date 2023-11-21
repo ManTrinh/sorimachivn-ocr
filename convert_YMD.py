@@ -40,12 +40,15 @@ def japanese_calendar_converter(text):
     month_ = int(re.sub(r'\D', '', text.split("年")[1].split("月")[0]))
     day_ = int(re.sub(r'\D', '', text.split("月")[1].split("日")[0]))
     md_val = month_*100 + day_
+    str_tmp = text.split("年")[0]
     # Tách năm, tháng và ngày từ chuỗi
-    if len(text.split("年")[0]) > 0 and len(text.split("年")[0]) < 3:
+    if len(str_tmp) == 3:
+        str_tmp = text.split("年")[0][1:]
+    if len(str_tmp) > 0 and len(str_tmp) < 3:
         # Lấy năm hiện tại
         current_year = datetime.datetime.now().year
         compare_year = int("{}".format(current_year)[-2:])
-        year_ = int(text.split("年")[0])
+        year_ = int(str_tmp)
         for era, era_data in eraDict.items():
             if era == "令和":
                 era_data.append(current_year-era_data[1]+1)
@@ -132,7 +135,7 @@ def json_date_result(text):
         if len(arr_format) > 0:
             gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
-                arr_format[0] = gengo_year
+                arr_format[0] = "{}".format(gengo_year)
             # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
             # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
             # formatted["year"] = "{}".format(arr_format[0])
