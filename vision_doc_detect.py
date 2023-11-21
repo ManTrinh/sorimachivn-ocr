@@ -13,10 +13,9 @@ import os
 import ast
 import openai
 import sort_line_vision
-import sort_line_improve
 
-openai.api_key="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"
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"ai-ocr-team-20231017-13e9705ba8ac.json"
+openai.api_key="c252ff0dae336f2155635074bcb03b81fb45aad0"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"ai-ocr-team-20231017-c252ff0dae33.json"
 
 def detect_text(content):
     # Google から Vision API 呼び出しを行う
@@ -25,12 +24,11 @@ def detect_text(content):
     response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
     # response = client.document_text_detection(image=image)
 
-    # all_anotations = sort_line_vision.get_extended_annotations(response)
-    # threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations)
-    # list_anotations = sort_line_vision.group_annotations(all_anotations, threshold)
-    # array_result = sort_line_vision.sort_and_combine_grouped_annotations(list_anotations)
-    array_result = sort_line_improve.get_sorted_lines(response)
-    # texts = response.text_annotations
+    all_anotations = sort_line_vision.get_extended_annotations(response)
+    threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations)
+    list_anotations = sort_line_vision.group_annotations(all_anotations, threshold)
+    array_result = sort_line_vision.sort_and_combine_grouped_annotations(list_anotations)
+    # array_result = sort_line_improve.get_sorted_lines(response)
 
     # # 使用する必要があるデータをグループ化する
     # result = []
