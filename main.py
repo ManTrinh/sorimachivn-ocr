@@ -33,8 +33,10 @@ def call_version():
 def get_json():
     try:
         file = request.files['file']
+        # Lấy giá trị của tham số 'param' từ request
+        type_ocr = request.args.get('type_ocr', default=None, type=int)
         file_byte_data = file.read()
-        result = receipt_vision.getAPI(file_byte_data)
+        result = receipt_vision.getAPI(file_byte_data, type_ocr)
         return result
 
     except Exception as e:

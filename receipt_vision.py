@@ -443,8 +443,8 @@ class ReceiptInfo:
         jsonFormat["formatted"] = convert_YMD.json_date_result(resultText)
         jsonFormat["text"] = resultText
         return jsonFormat
-
-    def get_Service_Detect(self):
+    
+    def get_Service_Detect_Receipt(self):
         rootVal = []
         infoVal = {}
         resultVal = {}
@@ -454,9 +454,7 @@ class ReceiptInfo:
         # 適格請求書発行者番号
         company_number = self.get_partern(0)
         storeInfoVal["companyId"] = self.get_json_info(company_number, 0)
-        # infoVal[receipt_keys[0]] = company_number
         # 取引先
-        # company_name = self.get_partern(1)
         company_name = ""
         if len(company_number) > 0:
             company_name = self.call_houjin_number(
@@ -468,44 +466,74 @@ class ReceiptInfo:
             if len(branch_name) > 0:
                 company_name = " ".join([company_name, branch_name])
         storeInfoVal["name"] = self.get_json_info(company_name, 1)
-        # infoVal[receipt_keys[1]] = company_name
         # 取引日付
-        # infoVal[receipt_keys[2]] = self.get_partern(2)
         paymentInfo["date"] = self.get_date_json_info(self.get_partern(2))
-        # 小計金額
-        # small_price = self.get_partern(12)
-        # infoVal[receipt_keys[12]] = small_price
-        # 小計消費税金額
-        # tax1 = self.get_partern(13)
-        # infoVal[receipt_keys[13]] = tax1
-        # 小計値引き額
-        # discount1 = self.get_partern(14)
-        # infoVal[receipt_keys[14]] = discount1
         # 合計金額
         total_price = self.get_partern(15)
         if len(total_price) == 0:
             total_price = "{}".format(self.get_sub_total())
         totalPrice["price"] = self.get_price_json_info(total_price)
-        # infoVal[receipt_keys[15]] = total_price
-        # 合計消費税金額
-        # tax2 = self.get_partern(16)
-        # if len(small_price) == 0 and len(tax1) > 0 and len(tax2) == 0:
-        #     tax2 = tax1
-        #     infoVal[receipt_keys[13]] = ""
-        # infoVal[receipt_keys[16]] = tax2
-        # 明細情報
-        # infoVal["明細情報"] = self.show_detail_item()
+
         resultVal["storeInfo"] = storeInfoVal
         resultVal["totalPrice"] = totalPrice
         resultVal["paymentInfo"] = paymentInfo
-        
         infoVal["meta"] = meta
         infoVal["result"] = resultVal
-        
         rootVal.append(infoVal)
         json_data = json.dumps(rootVal, ensure_ascii=False, indent=4)
 
         return json_data
+    
+    def get_Service_Detect_Invoice(self):
+        rootVal = []
+        infoVal = {}
+        resultVal = {}
+        storeInfoVal = {}
+        totalPrice = {}
+        paymentInfo = {}
+        # 適格請求書発行者番号
+        company_number = self.get_partern(0)
+        storeInfoVal["companyId"] = self.get_json_info(company_number, 0)
+        # 取引先
+        company_name = ""
+        if len(company_number) > 0:
+            company_name = self.call_houjin_number(
+                 re.sub(r'T', '', self.find_houjin_number(company_number)))
+            branch_name = ""
+            if self.get_branch() > -1:
+                branch_name = self.find_val(
+                    self.lines[self.get_branch()], branch_list)
+            if len(branch_name) > 0:
+                company_name = " ".join([company_name, branch_name])
+        storeInfoVal["companyName"] = self.get_json_info(company_name, 1)
+        # 取引日付
+        paymentInfo["issueDate"] = self.get_date_json_info(self.get_partern(2))
+        # 合計金額
+        total_price = self.get_partern(15)
+        if len(total_price) == 0:
+            total_price = "{}".format(self.get_sub_total())
+        totalPrice["price"] = self.get_price_json_info(total_price)
+
+        resultVal["generalInfo"] = paymentInfo
+        resultVal["recipientInfo"] = storeInfoVal
+        resultVal["totalPriceInfo"] = totalPrice
+        infoVal["meta"] = meta
+        infoVal["result"] = resultVal
+        rootVal.append(infoVal)
+        json_data = json.dumps(rootVal, ensure_ascii=False, indent=4)
+
+        return json_data
+
+    def get_Service_Detect(self, type_ocr):
+        if type_ocr <= 0:
+            return Exception(
+            "{}\nシステムエラー: "
+            "Error Type {}".format(type_ocr)
+            )
+        if type_ocr == 1:
+            return self.get_Service_Detect_Receipt()
+        if type_ocr == 2:
+            return self.get_Service_Detect_Invoice()
 
 
 def getResult(file_byte_data):
@@ -515,8 +543,8 @@ def getResult(file_byte_data):
     return obj.getInfo()
 
 
-def getAPI(file_byte_data):
+def getAPI(file_byte_data, type_ocr):
     content = vision_doc_detect.detect_text(file_byte_data)
     # all_text = [item[0] for item in content]
     obj = ReceiptInfo(content)
-    return obj.get_Service_Detect()
+    return obj.get_Service_Detect(type_ocr)
