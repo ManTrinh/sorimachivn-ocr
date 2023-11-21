@@ -124,7 +124,10 @@ def json_date_result(text):
             formatted["year"] = "{}".format(y_)    
     else:
         arr_format = []
-        arr_format = text.split("/")
+        if '/' in text:
+            arr_format = text.split("/")
+        if '-' in text:
+            arr_format = text.split("-")   
         gengo_year = ""
         if len(arr_format) > 0:
             gengo_year = conv_gengo_char(arr_format)
