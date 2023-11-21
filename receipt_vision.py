@@ -492,8 +492,10 @@ class ReceiptInfo:
         totalPrice = {}
         paymentInfo = {}
         # 適格請求書発行者番号
+        arr_tmp1 = []
         company_number = self.get_partern(0)
-        storeInfoVal["companyId"] = self.get_json_info(company_number, 0)
+        arr_tmp1.append(self.get_json_info(company_number, 0))
+        storeInfoVal["companyId"] = arr_tmp1
         # 取引先
         company_name = ""
         if len(company_number) > 0:
@@ -505,17 +507,24 @@ class ReceiptInfo:
                     self.lines[self.get_branch()], branch_list)
             if len(branch_name) > 0:
                 company_name = " ".join([company_name, branch_name])
-        storeInfoVal["companyName"] = self.get_json_info(company_name, 1)
+        arr_tmp3 = []  
+        arr_tmp3.append(self.get_json_info(company_name, 1))      
+        storeInfoVal["companyName"] = arr_tmp3
         # 取引日付
-        paymentInfo["issueDate"] = self.get_date_json_info(self.get_partern(2))
+        arr_tmp0 = []
+        arr_tmp0.append(self.get_date_json_info(self.get_partern(2)))
+        paymentInfo["issueDate"] = arr_tmp0
+
         # 合計金額
         total_price = self.get_partern(15)
         if len(total_price) == 0:
             total_price = "{}".format(self.get_sub_total())
-        totalPrice["price"] = self.get_price_json_info(total_price)
+        arr_tmp2 = []
+        arr_tmp2.append(self.get_price_json_info(total_price))
+        totalPrice["totalPrice"] = arr_tmp2
 
         resultVal["generalInfo"] = paymentInfo
-        resultVal["recipientInfo"] = storeInfoVal
+        resultVal["senderInfo"] = storeInfoVal
         resultVal["totalPriceInfo"] = totalPrice
         infoVal["meta"] = meta
         infoVal["result"] = resultVal
