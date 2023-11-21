@@ -23,4 +23,5 @@ gunicorn==20.1.0
 aiohttp==3.7.4
 opencv-python==4.8.1.78
 numpy==1.26.1
-# matplotlib==3.8.1
+shapely==2.0.2
+matplotlib==3.8.2
