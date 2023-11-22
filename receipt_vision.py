@@ -60,9 +60,12 @@ meta = {
 
 class ReceiptInfo:
     def __init__(self, lines, response) -> None:
-        self.lines = lines
+        # self.lines = lines
         # self.lines_sort = lines
         # self.text_annotations = response.text_annotations
+        self.lines = response.full_text_annotation.text.splitlines()
+        self.response = response
+
 
     def find_comapy_name(self, res, regname):
         soup = BeautifulSoup(res, 'html.parser')
@@ -467,10 +470,11 @@ class ReceiptInfo:
         # 取引日付
         paymentInfo["date"] = self.get_date_json_info(self.get_partern(2))
         # 合計金額
-        total_price = self.get_partern(15)
-        if len(total_price) == 0:
-            total_price = "{}".format(self.get_sub_total())
-        totalPrice["price"] = self.get_price_json_info(total_price)
+        # total_price = self.get_partern(15)
+        # if len(total_price) == 0:
+        #     total_price = "{}".format(self.get_sub_total())
+        # totalPrice["price"] = self.get_price_json_info(total_price)
+        totalPrice["price"] = total_price_extraction.get_total_price(self.response)
 
         resultVal["storeInfo"] = storeInfoVal
         resultVal["totalPrice"] = totalPrice
