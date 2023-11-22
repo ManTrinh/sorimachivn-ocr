@@ -1,3 +1,13 @@
+# /******************************************************************************
+#  All Rights Reserved. Copyright(c) 2023
+# *******************************************************************************
+#  File Name   : main.py
+#  Function    : 
+#  Create      : 2023/10/27 V1.0.0.0 ManTrinh
+#  Update      :
+#  Comment     : 
+# ******************************************************************************/
+
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 import os
@@ -33,7 +43,6 @@ def call_version():
 def get_json():
     try:
         file = request.files['file']
-        # Lấy giá trị của tham số 'param' từ request
         type_ocr = request.args.get('type_ocr', default=None, type=int)
         file_byte_data = file.read()
         result = receipt_vision.getAPI(file_byte_data, type_ocr)
@@ -45,7 +54,6 @@ def get_json():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # Xử lý tệp đã chọn
         file = request.files['file']
         if file:
             filename = secure_filename(file.filename)

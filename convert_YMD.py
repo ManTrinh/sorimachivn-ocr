@@ -136,9 +136,7 @@ def json_date_result(text):
             gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
                 arr_format[0] = "{}".format(gengo_year)
-            # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
-            # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
-            # formatted["year"] = "{}".format(arr_format[0])
+                
             y_ = int(get_only_digits(arr_format[0]))
             m_ = int(get_only_digits(arr_format[1]))
             d_ = int(get_only_digits(arr_format[2]))

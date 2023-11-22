@@ -21,35 +21,23 @@ def detect_text(content):
     # Google から Vision API 呼び出しを行う
     client = vision.ImageAnnotatorClient()
     image = vision.Image(content=content)
-    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
+    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja"]})
     # response = client.document_text_detection(image=image)
-
+    gradient = sort_line_vision.getGradientFromTextAnnotations(response.text_annotations)
     all_anotations = sort_line_vision.get_extended_annotations(response)
-    threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations)
-    list_anotations = sort_line_vision.group_annotations(all_anotations, threshold)
+    threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations, gradient)
+    list_anotations = sort_line_vision.group_annotations(all_anotations, threshold, gradient)
     array_result = sort_line_vision.sort_and_combine_grouped_annotations(list_anotations)
-    # array_result = sort_line_improve.get_sorted_lines(response)
-
-    # # 使用する必要があるデータをグループ化する
-    # result = []
-    # idx = 0
-    # for text in texts:
-    #     if idx == 0:
-    #         idx += 1
-    #         continue
-    #     arrVal = []
-    #     vertices = [
-    #         ast.literal_eval(f"[{vertex.x},{vertex.y}]") for vertex in text.bounding_poly.vertices
-    #     ]
-    #     arrVal.append(vertices)
-    #     arrVal.append(text.description)
-    #     result.append(arrVal)
-
-    # # 関数はデータの各行を返します
-    # array_result = sort_line.get_all_result(result, content)
+    
     if response.error.message:
         raise Exception(
             "{}\nシステムエラー: "
             "https://cloud.google.com/apis/design/errors".format(response.error.message)
         )
-    return array_result
+# 2023-11-22 TienQuach 修正    
+    result = {
+        'array_text': array_result,
+        'response': response
+    }
+# 2023-11-22 TienQuach 修正    
+    return result

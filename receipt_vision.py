@@ -14,18 +14,19 @@ from bs4 import BeautifulSoup
 import vision_doc_detect
 import json
 import convert_YMD
+import total_price_extraction
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # 正規表現
 number_company_list = [r"T\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+|〒\d{13}|事.*業.*者.*番.*号.*\d+"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 day_match_list = [
-    r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}|\b\d{4}-\d{2}-\d{2}\b']
+    r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}\b|\b\d{4}-\d{2}-\d{2}\b']
 small_price_list = [r"小.*計|お.*買.*上.*¥"]
 tax_price_list = [
     r".*外.*税.*¥|.*内.*税.*¥|.*消.*費.*税.*¥|.*税.*金.*¥|.*税.*額.*¥|8%対象.*¥|10%対象.*¥"]
 discount_price_list = [r".*値.*引|.*奉.*仕.*額"]
-total_price_list = [r"(?<!.)合.*計|領.*収.*金.*額|ク.*レ.*ジ.*ッ.*ト.*合.*計"]
+total_price_list = [r"(?<!.)合.*計|領.*収.*金.*額|ク.*レ.*ジ.*ッ.*ト.*合.*計|総.*合.*計|現.*計|領.*収.*金.*額|取.*引.*金.*額|ご.*利.*用.*額|料.*金"]
 price_list = [r"[¥\\\\][0-9,.]+|\d{1,3}(?:[,.]\d{3})+|[0-9,.]+円|\d{1,9}"]
 branch_list = [r".*店"]
 
@@ -58,8 +59,10 @@ meta = {
 }
 
 class ReceiptInfo:
-    def __init__(self, lines) -> None:
+    def __init__(self, lines, response) -> None:
         self.lines = lines
+        # self.lines_sort = lines
+        # self.text_annotations = response.text_annotations
 
     def find_comapy_name(self, res, regname):
         soup = BeautifulSoup(res, 'html.parser')
@@ -326,9 +329,6 @@ class ReceiptInfo:
         infoVal[receipt_keys[15]] = total_price
         # 合計消費税金額
         tax2 = self.get_partern(16)
-        # if len(small_price) == 0 and len(tax1) > 0 and len(tax2) == 0:
-        #     tax2 = tax1
-        #     infoVal[receipt_keys[13]] = ""
         infoVal[receipt_keys[16]] = tax2
         # 明細情報
         infoVal["明細情報"] = self.show_detail_item()
@@ -348,7 +348,7 @@ class ReceiptInfo:
     #         detailItem["name"] = text.replace(price, "").replace("円", "")
     #     return detailItem
 
-    def test(self, text):
+    def item_cut(self, text):
         detailItem = []
         arrIdx = []
         text = re.sub(r'(?<!\s)¥', " ¥", text)
@@ -401,7 +401,7 @@ class ReceiptInfo:
 
             tmp.append(self.lines[i])
         text = " ".join(tmp)
-        self.test(text)
+        self.item_cut(text)
         return arrVal
     
     def find_houjin_number(self, resultText):
@@ -417,8 +417,6 @@ class ReceiptInfo:
     def get_json_info(self, resultText, type):
         jsonFormat = {}
         val = ""
-        # jsonFormat["boundingBoxes"] = boundingBoxes
-        # jsonFormat["confidenceScore"] = confidenceScore
         if type == 0:
             # T13 Number
             val = self.find_houjin_number(resultText)
@@ -554,6 +552,5 @@ def getResult(file_byte_data):
 
 def getAPI(file_byte_data, type_ocr):
     content = vision_doc_detect.detect_text(file_byte_data)
-    # all_text = [item[0] for item in content]
-    obj = ReceiptInfo(content)
+    obj = ReceiptInfo(content['array_text'], content['response'])
     return obj.get_Service_Detect(type_ocr)
