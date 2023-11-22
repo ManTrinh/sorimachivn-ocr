@@ -109,7 +109,7 @@ def sort_and_combine_grouped_annotations(annotation_lists):
     for annotation_group in annotation_lists:
         annotation_group.sort(key=attrgetter('start_x'))
         texts = (o.text for o in annotation_group)
-        texts = ''.join(texts)
+        texts = ' '.join(texts)
         texts = re.sub(r'\s([-;:?.!](?:\s|$))', r'\1', texts)
         grouped_list.append(texts)
     return grouped_list
