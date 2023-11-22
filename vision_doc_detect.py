@@ -13,6 +13,7 @@ import os
 import ast
 import openai
 import sort_line_vision
+import pre_process_img
 
 openai.api_key="c252ff0dae336f2155635074bcb03b81fb45aad0"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"ai-ocr-team-20231017-c252ff0dae33.json"
@@ -20,6 +21,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"ai-ocr-team-20231017-c252ff0dae
 def detect_text(content):
     # Google から Vision API 呼び出しを行う
     client = vision.ImageAnnotatorClient()
+    content = pre_process_img.detect_img(content)
     image = vision.Image(content=content)
     response = client.document_text_detection(image=image, image_context={"language_hints": ["ja"]})
     # response = client.document_text_detection(image=image)
@@ -28,7 +30,7 @@ def detect_text(content):
     threshold = sort_line_vision.get_threshold_for_y_difference(all_anotations, gradient)
     list_anotations = sort_line_vision.group_annotations(all_anotations, threshold, gradient)
     array_result = sort_line_vision.sort_and_combine_grouped_annotations(list_anotations)
-    
+
     if response.error.message:
         raise Exception(
             "{}\nシステムエラー: "
