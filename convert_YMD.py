@@ -131,17 +131,16 @@ def json_date_result(text):
             formatted["year"] = "{}".format(y_)    
     else:
         arr_format = []
-        if '/' in text:
-            arr_format = text.split("/")
-        if '-' in text:
-            arr_format = text.split("-")   
+        arr_format = text.replace('/', ' ').replace('-', ' ').split()
         gengo_year = ""
         if len(arr_format) > 0:
             gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
-                arr_format[0] = "{}".format(gengo_year)
-                
-            y_ = int(get_only_digits(arr_format[0]))
+                arr_format[0] = gengo_year
+            # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
+            # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
+            # formatted["year"] = "{}".format(arr_format[0])
+            y_ = arr_format[0]
             m_ = int(get_only_digits(arr_format[1]))
             d_ = int(get_only_digits(arr_format[2]))
 

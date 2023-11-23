@@ -18,10 +18,10 @@ import total_price_extraction
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # 正規表現
-number_company_list = [r"T\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+|〒\d{13}|事.*業.*者.*番.*号.*\d+"]
+number_company_list = [r"T\d{13}|〒\d{13}|登.*録.*番.*号.*\d+|事.*業.*者.*登.*録.*\d+|事.*業.*者.*番.*号.*\d+"]
 phone_match_list = [r'\d{2,5}-\d{2,4}-\d{4}|\(\d{4}\)\d{2}-\d{4}|\d{4}-\d{6}']
 day_match_list = [
-    r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}\b|\b\d{4}-\d{2}-\d{2}\b']
+    r'\d{2,4}[年][^年月日]*\d{1,2}[月][^年月日]*\d{1,2}[日]|\d{2,4}/\d{2}/\d{2}\b|\d{2,4}-\d{2}-\d{2}\b']
 small_price_list = [r"小.*計|お.*買.*上.*¥"]
 tax_price_list = [
     r".*外.*税.*¥|.*内.*税.*¥|.*消.*費.*税.*¥|.*税.*金.*¥|.*税.*額.*¥|8%対象.*¥|10%対象.*¥"]
@@ -232,6 +232,7 @@ class ReceiptInfo:
             else:
                 val = self.find_val(
                     self.lines[self.get_number_idx()], number_company_list)
+                val = re.sub(u'[〒]', 'T', val)
 
         if title_idx == 1:
             val = self.get_company_name(self.get_phone_number())
@@ -431,9 +432,12 @@ class ReceiptInfo:
     def get_price_json_info(self, resultText):
         jsonFormat = {}
         jsonFormatSub = {}
-        if type(resultText) is list:
-            resultText = "".join(resultText)
-        jsonFormatSub["value"] = "{}".format(int(re.sub(r'\D', '', resultText)))
+        value = ""
+        if resultText:
+            if type(resultText) is list:
+                resultText = "".join(resultText)
+            value = "{}".format(int(re.sub(r'\D', '', resultText)))
+        jsonFormatSub["value"] = value
         jsonFormat["formatted"] = jsonFormatSub
         jsonFormat["text"] = resultText
         return jsonFormat
