@@ -112,6 +112,8 @@ def json_date_result(text):
     if len(text) == 0:
         return formatted
     if re.search(r'[年月日]', text):
+        ortherCharacter = re.compile(r'[^年月日0-9]')
+        text = re.sub(ortherCharacter, '', text)
         year_val = text.split("年")[0].split("年")[0]
         if re.match(r'^\d{4}$', year_val):
             date_val = conv_str_to_date(text)
@@ -136,11 +138,12 @@ def json_date_result(text):
         if len(arr_format) > 0:
             gengo_year = conv_gengo_char(arr_format)
             if gengo_year > 0:
-                arr_format[0] = gengo_year
+                arr_format[0] = "{}".format(gengo_year)
+
             # formatted["day"] = "{}".format(f"{arr_format[2]:02}")      
             # formatted["month"] = "{}".format(f"{arr_format[1]:02}")  
             # formatted["year"] = "{}".format(arr_format[0])
-            y_ = arr_format[0]
+            y_ = int(get_only_digits(arr_format[0]))
             m_ = int(get_only_digits(arr_format[1]))
             d_ = int(get_only_digits(arr_format[2]))
 
