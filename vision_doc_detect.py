@@ -21,9 +21,9 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"ai-ocr-team-20231017-c252ff0dae
 def detect_text(content):
     # Google から Vision API 呼び出しを行う
     client = vision.ImageAnnotatorClient()
-    content = pre_process_img.detect_img(content)
+    # content = pre_process_img.detect_img(content)
     image = vision.Image(content=content)
-    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja"]})
+    response = client.document_text_detection(image=image, image_context={"language_hints": ["ja", "ja-katakana", "en", "digits"]})
     # response = client.document_text_detection(image=image)
     gradient = sort_line_vision.getGradientFromTextAnnotations(response.text_annotations)
     all_anotations = sort_line_vision.get_extended_annotations(response)

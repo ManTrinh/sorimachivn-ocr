@@ -457,15 +457,15 @@ class ReceiptInfo:
         storeInfoVal["companyId"] = self.get_json_info(company_number, 0)
         # 取引先
         company_name = ""
-        if len(company_number) > 0:
-            company_name = self.call_houjin_number(
-                 re.sub(r'T', '', self.find_houjin_number(company_number)))
-            branch_name = ""
-            if self.get_branch() > -1:
-                branch_name = self.find_val(
-                    self.lines[self.get_branch()], branch_list)
-            if len(branch_name) > 0:
-                company_name = " ".join([company_name, branch_name])
+        # if len(company_number) > 0:
+        #     company_name = self.call_houjin_number(
+        #          re.sub(r'T', '', self.find_houjin_number(company_number)))
+        #     branch_name = ""
+        #     if self.get_branch() > -1:
+        #         branch_name = self.find_val(
+        #             self.lines[self.get_branch()], branch_list)
+        #     if len(branch_name) > 0:
+        #         company_name = " ".join([company_name, branch_name])
         storeInfoVal["name"] = self.get_json_info(company_name, 1)
         # 取引日付
         paymentInfo["date"] = self.get_date_json_info(self.get_partern(2))

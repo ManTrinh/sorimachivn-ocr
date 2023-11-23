@@ -122,6 +122,10 @@ def json_date_result(text):
             m_ = int(date_val.month)
             d_ = int(date_val.day)
 
+            #Set tạm
+            if y_ == 2013:
+                y_ = 2023
+
             formatted["day"] = "{}".format(f"{d_:02}")      
             formatted["month"] = "{}".format(f"{m_:02}")  
             formatted["year"] = "{}".format(y_)    
@@ -140,6 +144,10 @@ def json_date_result(text):
             y_ = int(get_only_digits(arr_format[0]))
             m_ = int(get_only_digits(arr_format[1]))
             d_ = int(get_only_digits(arr_format[2]))
+
+            #Set tạm
+            if y_ == 2013:
+                y_ = 2023
 
             formatted["day"] = "{}".format(f"{d_:02}")      
             formatted["month"] = "{}".format(f"{m_:02}")  
