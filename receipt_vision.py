@@ -474,7 +474,9 @@ class ReceiptInfo:
         # if len(total_price) == 0:
         #     total_price = "{}".format(self.get_sub_total())
         # totalPrice["price"] = self.get_price_json_info(total_price)
-        totalPrice["price"] = total_price_extraction.get_total_price(self.response)
+        # totalPrice["price"] = total_price_extraction.get_total_price(self.response)
+        total_price = total_price_extraction.get_total_price(self.response)
+        totalPrice["price"] = self.get_price_json_info(total_price)
 
         resultVal["storeInfo"] = storeInfoVal
         resultVal["totalPrice"] = totalPrice
