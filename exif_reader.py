@@ -1,5 +1,6 @@
 from PIL import Image
 from PIL.ExifTags import TAGS
+import io
 
 import glob
 class Exif():
@@ -35,7 +36,7 @@ class Exif():
         self.exif_dict = {}
         self.origin_size = {}
 
-    def read(self, jpeg_full_path):
+    def read(self, byte_data):
         '''
         JPEGのEXIFを取り出す
         :param jpeg_full_path: JPEGファイルのフルパス
@@ -43,8 +44,8 @@ class Exif():
         '''
 
         self.exif_dict = {}
-
-        im = Image.open(jpeg_full_path)
+        img_io = io.BytesIO(byte_data)
+        im = Image.open(img_io)
         self.origin_size['width'] = im.width
         self.origin_size['height'] = im.height
         # Exif データを取得

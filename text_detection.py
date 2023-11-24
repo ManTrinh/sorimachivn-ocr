@@ -5,6 +5,7 @@ import requests
 import time
 import re
 from PIL import Image
+import io
 
 from exif_reader import Exif
 from io import BytesIO
@@ -350,41 +351,42 @@ class GoogleTextDetection():
         :return:
         '''
 
-        retry_count = 1
+        # retry_count = 1
         while True:
             try:
                 self.top_dict = self.__detect_text_internal__()
-                with open(self.json_file, 'w', encoding='utf-8') as f:
-                    json.dump(self.top_dict, f, indent=2, ensure_ascii=False)
+                # with open(self.json_file, 'w', encoding='utf-8') as f:
+                #     json.dump(self.top_dict, f, indent=2, ensure_ascii=False)
                 return
             except ValueError:
                 # TypeErrorはファイルサイズが大きのでリトライを行ってもしょうがないためそのまま上げる
                 raise
-            except:
-                message = 'failed to text Google detection retry:{} image file:{}'.format(
-                    retry_count, self.image_file)
-                if retry_count >= retry:
-                    message = 'failed to Google detection over {} image:{} json_file:{}'.\
-                        format(retry, self.image_file, self.json_file)
-                    raise
-                retry_count += 1
-                time.sleep(0.5)  # リトライ前に、0.5秒待って再度トライ
+            # except:
+                # message = 'failed to text Google detection retry:{} image file:{}'.format(
+                #     retry_count, self.image_file)
+                # if retry_count >= retry:
+                #     message = 'failed to Google detection over {} image:{} json_file:{}'.\
+                #         format(retry, self.image_file, self.json_file)
+                #     raise
+                # retry_count += 1
+                # time.sleep(0.5)  # リトライ前に、0.5秒待って再度トライ
 
         pass
 
     def __load_image__(self):
         # Exifをチェックする
         exif = Exif()
-        exif.read(self.image_file)
+        # exif.read(self.image_file)
+        exif.read(self.image_bytes)
 
         # EXifからオリエンテーションを取得する
         self.exif_orientation = exif.get_Orientation()
-        message = '{} exif exif_orientation is num:{} string:{}'.format(
-            self.image_file, self.exif_orientation, Exif.OrientationStringList[
-                self.exif_orientation]
-        )
-
-        self.image = Image.open(self.image_file)
+        # message = '{} exif exif_orientation is num:{} string:{}'.format(
+        #     self.image_file, self.exif_orientation, Exif.OrientationStringList[
+        #         self.exif_orientation]
+        # )
+        img_io = io.BytesIO(self.image_bytes)
+        self.image = Image.open(img_io)
         (self.width, self.height) = self.image.size
         # print('Original width', self.width, 'Original Height', self.height)
 
@@ -399,9 +401,9 @@ class GoogleTextDetection():
             # im = im.rotate(270, expand=True)
         elif self.exif_orientation == 8:  # Rotate 270 CW
             self.image = self.image.transpose(Image.ROTATE_90)
-        else:
-            message = 'no Support format: File:{}, Orientation:{}, {}'.format(
-                self.image_file, self.exif_orientation, Exif.OrientationStringList[self.exif_orientation])
+        # else:
+        #     message = 'no Support format: File:{}, Orientation:{}, {}'.format(
+        #         self.image_file, self.exif_orientation, Exif.OrientationStringList[self.exif_orientation])
 
         (self.width, self.height) = self.image.size
         # print('New width', self.width, 'New Height', self.height)
@@ -610,7 +612,7 @@ class GoogleTextDetection():
         # fullAnnotation以下の座用変換を行う
         self.__update_text_annotation_rectangles__(matrix)
 
-    def setup(self, image_full_path, json_full_path, force=False, retry=3):
+    def setup(self, image_bytes, force=False, retry=3):
         '''
         Googleのテキスト検出を行う。json_full_pathがあれがここから読み込む。
         ない場合は、　Googleにテキスト・ディテクションを行い、json_full_pathにjsonを保存する。
@@ -620,24 +622,25 @@ class GoogleTextDetection():
         :return: なし
         '''
 
-        self.image_file = image_full_path
-        self.json_file = json_full_path
+        # self.image_file = image_full_path
+        self.image_bytes = image_bytes
+        # self.json_file = json_full_path
 
-        func_message = 'GooglTextDetection::set up Image={}, Json={}, force={}, retry={}'.format(
-            self.image_file, self.json_file, force, retry
-        )
+        # func_message = 'GooglTextDetection::set up Image={}, Json={}, force={}, retry={}'.format(
+        #     self.image_file, self.json_file, force, retry
+        # )
 
         # 画像ファイルを読み、高さと幅を知る。
         self.__load_image__()
-
-        if force:
-            self.__detect_text__(retry)
-        elif os.path.exists(json_full_path):
-            # もしJSONの横込みに失敗した場合は、再度Googleテキスト検索を行う
-            if self.__read_json__() == False:
-                self.__detect_text__(retry)
-        else:
-            self.__detect_text__(retry)
+        self.__detect_text__(retry)
+        # if force:
+        #     self.__detect_text__(retry)
+        # elif os.path.exists(json_full_path):
+        #     # もしJSONの横込みに失敗した場合は、再度Googleテキスト検索を行う
+        #     if self.__read_json__() == False:
+        #         self.__detect_text__(retry)
+        # else:
+        #     self.__detect_text__(retry)
 
         # TextAnnotationから方向を取得
         orientation = self.__get_orientation__()

@@ -56,13 +56,14 @@ def get_json():
 @app.route('/aipo-test', methods=['POST'])
 def test():
     try:
-        f = request.files['file']
+        file = request.files['file']
         type_ocr = request.args.get('type_ocr', default=None, type=int)
-        image_file = os.path.join("./uploads/image/", f.filename)
-        json_file = os.path.join("./uploads/json/", f.filename + ".json")
-        f.save(image_file)
+        file_byte_data = file.read()
+        # image_file = os.path.join("./uploads/image/", f.filename)
+        # json_file = os.path.join("./uploads/json/", f.filename + ".json")
+        # f.save(image_file)
         text_detect = text_detection.GoogleTextDetection()
-        text_detect.setup(image_file, json_file)
+        text_detect.setup(file_byte_data)
         vline = text_detect.vertical_lines
         lines = []
         for val in vline:
