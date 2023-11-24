@@ -11,10 +11,8 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-import vision_doc_detect
 import json
 import convert_YMD
-import total_price_extraction
 api_url = 'http://www.jpnumber.com/searchnumber.do?'
 
 # 正規表現
@@ -59,13 +57,11 @@ meta = {
 }
 
 class ReceiptInfo:
-    def __init__(self, lines, response) -> None:
+    def __init__(self, lines) -> None:
         # self.lines = lines
         # self.lines_sort = lines
         # self.text_annotations = response.text_annotations
-        self.lines = response.full_text_annotation.text.splitlines()
-        self.response = response
-
+        self.lines = lines
 
     def find_comapy_name(self, res, regname):
         soup = BeautifulSoup(res, 'html.parser')
@@ -479,8 +475,7 @@ class ReceiptInfo:
         #     total_price = "{}".format(self.get_sub_total())
         # totalPrice["price"] = self.get_price_json_info(total_price)
         # totalPrice["price"] = total_price_extraction.get_total_price(self.response)
-        total_price = total_price_extraction.get_total_price(self.response)
-        totalPrice["price"] = self.get_price_json_info(total_price)
+        totalPrice["price"] = self.get_price_json_info(self.get_partern(15))
 
         resultVal["storeInfo"] = storeInfoVal
         resultVal["totalPrice"] = totalPrice
@@ -552,20 +547,6 @@ class ReceiptInfo:
         if type_ocr == 2:
             return self.get_Service_Detect_Invoice()
 
-
-def getResult(file_byte_data):
-    content = vision_doc_detect.detect_text(file_byte_data)
-    all_text = [item[0] for item in content]
-    obj = ReceiptInfo(all_text)
-    return obj.getInfo()
-
-
-def getAPI(file_byte_data, type_ocr):
-    content = vision_doc_detect.detect_text(file_byte_data)
-    obj = ReceiptInfo(content['array_text'], content['response'])
-    return obj.get_Service_Detect(type_ocr)
-
-def getAPI(file_byte_data, type_ocr):
-    content = vision_doc_detect.detect_text(file_byte_data)
-    obj = ReceiptInfo(content['array_text'], content['response'])
+def getAPI(lines, type_ocr):
+    obj = ReceiptInfo(lines)
     return obj.get_Service_Detect(type_ocr)

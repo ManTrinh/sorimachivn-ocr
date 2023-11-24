@@ -1,0 +1,9 @@
+{
+  "text_detection_max_count": 3,
+  "google_text_detection_api_url": "https://vision.googleapis.com/v1/images:annotate",
+  "code_name": "レシート",
+  "search_file": "config/search.json",
+  "max_image_resize_times": 2,
+  "google_api_key": "AIzaSyAPtjMkIhTm5Ev9ju3gJ1gwObj_sFGe9Dg",
+  "cache_path": "cache"
+}

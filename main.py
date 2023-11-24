@@ -13,6 +13,8 @@ from werkzeug.utils import secure_filename
 import os
 import receipt_vision
 import json
+import text_detection
+import aipo_test
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -50,6 +52,26 @@ def get_json():
 
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+@app.route('/aipo-test', methods=['POST'])
+def test():
+    try:
+        f = request.files['file']
+        type_ocr = request.args.get('type_ocr', default=None, type=int)
+        image_file = os.path.join("./uploads/image/", f.filename)
+        json_file = os.path.join("./uploads/json/", f.filename + ".json")
+        f.save(image_file)
+        text_detect = text_detection.GoogleTextDetection()
+        text_detect.setup(image_file, json_file)
+        vline = text_detect.vertical_lines
+        lines = []
+        for val in vline:
+            lines.append(val['text'])
+        result = aipo_test.getAPI(lines, type_ocr)
+        return result
+
+    except Exception as e:
+        return jsonify({'error': str(e)})    
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
